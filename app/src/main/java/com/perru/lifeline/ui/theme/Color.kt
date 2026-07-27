@@ -1,11 +1,25 @@
-package com.perru.lifeline.ui.theme
+package com.perru.LifeLine.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// Primary Palette (Warm Terracotta & Crimson accents)
+val Terracotta = Color(0xFFC85A32)
+val CrimsonLight = Color(0xFFF9E2DB)
+val InkBrown = Color(0xFF2C1E18)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+// Secondary Palette (Sage Green accent tones)
+val SageGreen = Color(0xFF6B8E72)
+val SageGreenLight = Color(0xFFE2EBE4)
+val SageGreenDark = Color(0xFF2F4534)
+
+// Light Theme Surface & Backgrounds
+val CreamBackground = Color(0xFFFAF7F2)
+val CreamSurface = Color(0xFFFFFDF9)
+
+// Neutral & Card Borders
+val WarmCardBorder = Color(0xFFEDE4DB)
+val MutedBrown = Color(0xFF7A6A60)
+val Divider = Color(0xFFDCD2C8)
+
+// Status & Indicators
+val UrgencyCritical = Color(0xFFD32F2F)
