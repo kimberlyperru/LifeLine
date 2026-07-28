@@ -1,4 +1,4 @@
-package com.perru.LifeLine.ui.theme
+package com.perru.lifeline.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

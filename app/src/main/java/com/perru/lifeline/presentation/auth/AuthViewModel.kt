@@ -1,11 +1,11 @@
-package com.perru.LifeLine.presentation.auth
+package com.perru.lifeline.presentation.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.perru.LifeLine.domain.model.BloodGroup
-import com.perru.LifeLine.domain.model.LifeLineUser
-import com.perru.LifeLine.domain.model.UserRole
-import com.perru.LifeLine.domain.repository.AuthRepository
+import com.perru.lifeline.domain.model.BloodGroup
+import com.perru.lifeline.domain.model.LifeLineUser
+import com.perru.lifeline.domain.model.UserRole
+import com.perru.lifeline.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

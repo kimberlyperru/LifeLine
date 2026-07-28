@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "874021857367",
+    "project_id": "lifeline-783d1",
+    "storage_bucket": "lifeline-783d1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:874021857367:android:ceb3dbdbfa04a8654d5b12",
+        "android_client_info": {
+          "package_name": "com.perru.lifeline"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBH978hrqzie6YCwzdbdFZ0DneFzssK5oI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

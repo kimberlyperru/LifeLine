@@ -1,4 +1,4 @@
-package com.perru.LifeLine.presentation.donor
+package com.perru.lifeline.presentation.donor
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,8 +11,8 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.perru.LifeLine.presentation.common.RequestCard
-import com.perru.LifeLine.util.BloodCompatibility
+import com.perru.lifeline.presentation.common.RequestCard
+import com.perru.lifeline.util.BloodCompatibility
 import java.util.concurrent.TimeUnit
 
 @Composable

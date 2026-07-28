@@ -1,4 +1,4 @@
-package com.perru.LifeLine.data.repository
+package com.perru.lifeline.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider

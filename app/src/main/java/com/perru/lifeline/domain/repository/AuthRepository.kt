@@ -1,7 +1,7 @@
-package com.perru.LifeLine.domain.repository
+package com.perru.lifeline.domain.repository
 
-import com.perru.LifeLine.domain.model.LifeLineUser
-import com.perru.LifeLine.domain.model.UserRole
+import com.perru.lifeline.domain.model.LifeLineUser
+import com.perru.lifeline.domain.model.UserRole
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {

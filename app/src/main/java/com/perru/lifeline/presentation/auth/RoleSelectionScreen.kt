@@ -1,4 +1,4 @@
-package com.perru.LifeLine.presentation.auth
+package com.perru.lifeline.presentation.auth
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
@@ -15,8 +15,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.perru.LifeLine.domain.model.BloodGroup
-import com.perru.LifeLine.domain.model.UserRole
+import com.perru.lifeline.domain.model.BloodGroup
+import com.perru.lifeline.domain.model.UserRole
 
 @Composable
 fun RoleSelectionScreen(
@@ -103,7 +103,12 @@ fun RoleSelectionScreen(
                 onClick = {
                     viewModel.completeOnboarding(
                         uid = uid, email = email, role = selectedRole!!,
-                        form = OnboardingFormState(displayName = displayName, city = city, bloodGroup = bloodGroup, hospitalName = hospitalName),
+                        form = OnboardingFormState(
+                            displayName = displayName,
+                            city = city,
+                            bloodGroup = bloodGroup,
+                            hospitalName = hospitalName
+                        ),
                         onSuccess = onOnboardingComplete
                     )
                 },

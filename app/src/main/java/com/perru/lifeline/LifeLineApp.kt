@@ -1,4 +1,4 @@
-package com.perru.LifeLine
+package com.perru.lifeline
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

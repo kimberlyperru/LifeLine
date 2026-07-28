@@ -1,13 +1,13 @@
-package com.perru.LifeLine.presentation.hospital
+package com.perru.lifeline.presentation.hospital
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.perru.LifeLine.data.remote.CloudinaryUploader
-import com.perru.LifeLine.domain.model.BloodRequest
-import com.perru.LifeLine.domain.model.LifeLineUser
-import com.perru.LifeLine.domain.repository.AuthRepository
-import com.perru.LifeLine.domain.repository.RequestRepository
+import com.perru.lifeline.data.remote.CloudinaryUploader
+import com.perru.lifeline.domain.model.BloodRequest
+import com.perru.lifeline.domain.model.LifeLineUser
+import com.perru.lifeline.domain.repository.AuthRepository
+import com.perru.lifeline.domain.repository.RequestRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

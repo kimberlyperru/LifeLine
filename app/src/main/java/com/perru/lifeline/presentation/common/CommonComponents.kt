@@ -1,4 +1,4 @@
-package com.perru.LifeLine.presentation.common
+package com.perru.lifeline.presentation.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -10,11 +10,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.perru.LifeLine.domain.model.BloodRequest
-import com.perru.LifeLine.domain.model.UrgencyLevel
-import com.perru.LifeLine.ui.theme.UrgencyCritical
-import com.perru.LifeLine.ui.theme.UrgencyHigh
-import com.perru.LifeLine.ui.theme.UrgencyModerate
+import com.perru.lifeline.domain.model.BloodRequest
+import com.perru.lifeline.ui.theme.UrgencyHigh
+import com.perru.lifeline.ui.theme.UrgencyModerate
+import com.perru.lifeline.domain.model.UrgencyLevel
+import com.perru.lifeline.ui.theme.UrgencyCritical
 
 fun UrgencyLevel.color(): Color = when (this) {
     UrgencyLevel.CRITICAL -> UrgencyCritical

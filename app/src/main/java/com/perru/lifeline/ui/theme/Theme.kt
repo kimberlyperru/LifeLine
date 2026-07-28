@@ -1,4 +1,4 @@
-package com.perru.LifeLine.ui.theme
+package com.perru.lifeline.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -10,7 +10,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import android.app.Activity
-import androidx.compose.material3.Divider
 
 private val LifeLineLightColors = lightColorScheme(
     primary = Terracotta, onPrimary = CreamSurface,

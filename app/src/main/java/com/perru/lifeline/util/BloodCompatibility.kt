@@ -1,4 +1,4 @@
-package com.perru.LifeLine.util
+package com.perru.lifeline.util
 
 import com.perru.LifeLine.domain.model.BloodGroup
 

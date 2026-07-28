@@ -1,4 +1,4 @@
-package com.perru.LifeLine.domain.model
+package com.perru.lifeline.domain.model
 
 enum class UserRole { DONOR, HOSPITAL, UNSET }
 

@@ -1,11 +1,11 @@
-package com.perru.LifeLine.data.remote
+package com.perru.lifeline.data.remote
 
 import android.content.Context
 import android.net.Uri
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
-import com.perru.LifeLine.BuildConfig
+import com.perru.lifeline.BuildConfig
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject

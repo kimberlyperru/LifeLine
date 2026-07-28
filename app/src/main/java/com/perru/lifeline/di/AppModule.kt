@@ -1,11 +1,11 @@
-package com.perru.LifeLine.di
+package com.perru.lifeline.di
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.perru.LifeLine.data.repository.AuthRepositoryImpl
-import com.perru.LifeLine.data.repository.RequestRepositoryImpl
 import com.perru.LifeLine.domain.repository.AuthRepository
 import com.perru.LifeLine.domain.repository.RequestRepository
+import com.perru.lifeline.data.repository.AuthRepositoryImpl
+import com.perru.lifeline.data.repository.RequestRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

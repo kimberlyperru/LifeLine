@@ -1,22 +1,22 @@
-package com.perru.LifeLine.presentation.donor
+package com.perru.lifeline.presentation.donor
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.perru.LifeLine.domain.model.BloodRequest
-import com.perru.LifeLine.domain.model.LifeLineUser
-import com.perru.LifeLine.domain.model.Pledge
-import com.perru.LifeLine.domain.repository.AuthRepository
-import com.perru.LifeLine.domain.repository.RequestRepository
-import com.perru.LifeLine.util.BloodCompatibility
+import com.perru.lifeline.domain.model.BloodRequest
+import com.perru.lifeline.domain.model.LifeLineUser
+import com.perru.lifeline.domain.model.Pledge
+import com.perru.lifeline.domain.repository.AuthRepository
+import com.perru.lifeline.domain.repository.RequestRepository
+import com.perru.lifeline.util.BloodCompatibility
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.collections.filter
 
 data class DonorFeedUiState(
     val allRequests: List<BloodRequest> = emptyList(),

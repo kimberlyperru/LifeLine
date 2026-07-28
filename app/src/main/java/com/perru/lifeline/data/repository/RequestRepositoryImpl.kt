@@ -1,4 +1,4 @@
-package com.perru.LifeLine.data.repository
+package com.perru.lifeline.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.jvm.java
 
 private const val REQUESTS_COLLECTION = "requests"
 private const val PLEDGES_COLLECTION = "pledges"

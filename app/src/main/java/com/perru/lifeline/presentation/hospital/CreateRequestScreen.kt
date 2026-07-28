@@ -1,4 +1,4 @@
-package com.perru.LifeLine.presentation.hospital
+package com.perru.lifeline.presentation.hospital
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -14,15 +14,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.perru.LifeLine.domain.model.BloodComponent
-import com.perru.LifeLine.domain.model.BloodGroup
-import com.perru.LifeLine.domain.model.BloodRequest
-import com.perru.LifeLine.domain.model.UrgencyLevel
+import com.perru.lifeline.domain.model.BloodComponent
+import com.perru.lifeline.domain.model.BloodGroup
+import com.perru.lifeline.domain.model.BloodRequest
+import com.perru.lifeline.domain.model.UrgencyLevel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

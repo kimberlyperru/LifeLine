@@ -1,4 +1,4 @@
-package com.perru.LifeLine.presentation.auth
+package com.perru.lifeline.presentation.auth
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -15,6 +15,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.perru.LifeLine.R
+
 
 @Composable
 fun LoginScreen(

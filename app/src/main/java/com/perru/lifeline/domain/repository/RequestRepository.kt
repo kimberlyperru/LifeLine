@@ -1,7 +1,7 @@
-package com.perru.LifeLine.domain.repository
+package com.perru.lifeline.domain.repository
 
-import com.perru.LifeLine.domain.model.BloodRequest
-import com.perru.LifeLine.domain.model.Pledge
+import com.perru.lifeline.domain.model.BloodRequest
+import com.perru.lifeline.domain.model.Pledge
 import kotlinx.coroutines.flow.Flow
 
 interface RequestRepository {
