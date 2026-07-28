@@ -1,5 +1,5 @@
 [versions]
-agp = "8.5.2"
+agp = "8.13.2"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -18,6 +18,7 @@ coroutines = "1.8.1"
 materialIconsExtended = "1.6.8"
 googleServices = "4.4.2"
 firebaseAuth = "24.2.0"
+firebaseDatabase = "22.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -55,6 +56,7 @@ cloudinary-android = { group = "com.cloudinary", name = "cloudinary-android", ve
 # Coroutines
 kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "coroutines" }
 google-firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
+firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

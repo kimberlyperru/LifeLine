@@ -1,6 +1,6 @@
 package com.perru.lifeline.util
 
-import com.perru.LifeLine.domain.model.BloodGroup
+import com.perru.lifeline.domain.model.BloodGroup
 
 object BloodCompatibility {
     private val donorCanGiveTo: Map<BloodGroup, Set<BloodGroup>> = mapOf(

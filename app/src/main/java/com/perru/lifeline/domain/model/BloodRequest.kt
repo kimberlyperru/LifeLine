@@ -1,6 +1,6 @@
 package com.perru.lifeline.domain.model
 
-import com.perru.LifeLine.domain.model.BloodGroup
+import com.perru.lifeline.domain.model.BloodGroup
 
 enum class BloodComponent { WHOLE_BLOOD, PLATELETS, PLASMA }
 

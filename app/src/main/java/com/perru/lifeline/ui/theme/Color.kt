@@ -22,4 +22,9 @@ val MutedBrown = Color(0xFF7A6A60)
 val Divider = Color(0xFFDCD2C8)
 
 // Status & Indicators
-val UrgencyCritical = Color(0xFFD32F2F)
+
+
+val UrgencyCritical = Color(0xFFE53935) // Red
+val UrgencyHigh = Color(0xFFFB8C00)     // Orange
+val UrgencyModerate = Color(0xFFFDD835) // Yellow
+val UrgencyLow = Color(0xFF4CAF50)      // Green
