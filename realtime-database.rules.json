@@ -1,0 +1,22 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "requests": {
+      ".read": "auth != null",
+      "$requestId": {
+        ".write": "auth != null && (!data.exists() || data.child('hospitalUid').val() === auth.uid || newData.child('hospitalUid').val() === data.child('hospitalUid').val())"
+      }
+    },
+    "pledges": {
+      ".read": "auth != null",
+      "$pledgeId": {
+        ".write": "auth != null && (!data.exists()) && newData.child('donorUid').val() === auth.uid"
+      }
+    }
+  }
+}

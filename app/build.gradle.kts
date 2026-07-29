@@ -1,35 +1,49 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.google.services)
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("com.google.dagger.hilt.android")
+    id("com.google.gms.google-services")
+    kotlin("kapt")
 }
 
 android {
     namespace = "com.perru.lifeline"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.perru.lifeline"
-        minSdk = 23
-        targetSdk = 35
+        minSdk = 26
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "CLOUDINARY_CLOUD_NAME", "\"${System.getenv("CLOUDINARY_CLOUD_NAME") ?: ""}\"")
-        buildConfigField("String", "CLOUDINARY_UPLOAD_PRESET", "\"${System.getenv("CLOUDINARY_UPLOAD_PRESET") ?: ""}\"")
+        // Fixed field name key
+        buildConfigField("String", "CLOUDINARY_CLOUD_NAME", "\"sckangrp\"")
+        buildConfigField("String", "CLOUDINARY_UPLOAD_PRESET", "\"lifeline_unsigned\"")
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
+        debug {
+            isMinifyEnabled = false
+        }
     }
+
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
+
+    // Added for Kotlin 1.9.24 compatibility
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.14"
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -37,9 +51,11 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    buildFeatures {
-        compose = true
-        buildConfig = true
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
     }
 }
 
@@ -70,9 +86,7 @@ dependencies {
     implementation("com.google.firebase:firebase-database-ktx")
     implementation("com.google.android.gms:play-services-auth:21.2.0")
 
-    // Cloudinary upload via plain HTTP multipart — deliberately NOT using the
-    // cloudinary-android SDK, which bundles outdated Fresco native libraries
-    // that fail 16 KB page-size alignment checks on newer Android devices.
+    // Cloudinary upload via OkHttp
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     // Coroutines

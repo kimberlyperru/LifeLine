@@ -1,6 +1,10 @@
 package com.perru.lifeline.domain.model
 
-enum class UserRole { DONOR, HOSPITAL, UNSET }
+enum class UserRole {
+    DONOR,
+    HOSPITAL,
+    UNSET
+}
 
 enum class BloodGroup(val label: String) {
     A_POS("A+"), A_NEG("A-"),
@@ -18,7 +22,9 @@ data class LifeLineUser(
     val role: UserRole = UserRole.UNSET,
     val bloodGroup: BloodGroup? = null,
     val city: String = "",
+    // Donor-specific
     val lastDonationDateMillis: Long? = null,
+    // Hospital-specific
     val hospitalName: String = "",
     val hospitalVerified: Boolean = false,
     val createdAtMillis: Long = System.currentTimeMillis()

@@ -37,13 +37,19 @@ class HospitalViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     val myRequests: StateFlow<List<BloodRequest>> = currentUser
-        .flatMapLatest { user -> if (user == null) flowOf(emptyList()) else requestRepository.requestsByHospitalFlow(user.uid) }
+        .flatMapLatest { user ->
+            if (user == null) flowOf(emptyList()) else requestRepository.requestsByHospitalFlow(user.uid)
+        }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private val _createState = MutableStateFlow(CreateRequestState())
     val createState: StateFlow<CreateRequestState> = _createState.asStateFlow()
 
-    fun submitRequest(hospital: LifeLineUser, request: BloodRequest, verificationImageUri: Uri?) {
+    fun submitRequest(
+        hospital: LifeLineUser,
+        request: BloodRequest,
+        verificationImageUri: Uri?
+    ) {
         _createState.value = CreateRequestState(isSubmitting = true)
         viewModelScope.launch {
             var imageUrl = ""
@@ -71,5 +77,15 @@ class HospitalViewModel @Inject constructor(
         }
     }
 
-    fun resetCreateState() { _createState.value = CreateRequestState() }
+    fun resetCreateState() {
+        _createState.value = CreateRequestState()
+    }
+
+    /** Resets role to UNSET so the auth-driven nav graph routes back through onboarding,
+     *  letting the person pick Donor or Hospital again. */
+    fun switchRole(uid: String) {
+        viewModelScope.launch {
+            authRepository.setUserRole(uid, com.perru.lifeline.domain.model.UserRole.UNSET)
+        }
+    }
 }

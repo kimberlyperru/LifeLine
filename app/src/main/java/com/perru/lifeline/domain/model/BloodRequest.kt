@@ -1,14 +1,18 @@
 package com.perru.lifeline.domain.model
 
-import com.perru.lifeline.domain.model.BloodGroup
-
-enum class BloodComponent { WHOLE_BLOOD, PLATELETS, PLASMA }
-
-enum class UrgencyLevel(val label: String) {
-    CRITICAL("Critical"), HIGH("High"), MODERATE("Moderate")
+enum class BloodComponent {
+    WHOLE_BLOOD, PLATELETS, PLASMA
 }
 
-enum class RequestStatus { ACTIVE, FULFILLED, EXPIRED }
+enum class UrgencyLevel(val label: String) {
+    CRITICAL("Critical"),
+    HIGH("High"),
+    MODERATE("Moderate")
+}
+
+enum class RequestStatus {
+    ACTIVE, FULFILLED, EXPIRED
+}
 
 data class BloodRequest(
     val id: String = "",

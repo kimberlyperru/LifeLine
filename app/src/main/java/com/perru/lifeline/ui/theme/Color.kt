@@ -2,29 +2,28 @@ package com.perru.lifeline.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Primary Palette (Warm Terracotta & Crimson accents)
-val Terracotta = Color(0xFFC85A32)
-val CrimsonLight = Color(0xFFF9E2DB)
-val InkBrown = Color(0xFF2C1E18)
+// Base palette
+val CreamBackground = Color(0xFFFBF3E9)
+val CreamSurface = Color(0xFFFFFCF7)
+val WarmCardBorder = Color(0xFFF0E3D2)
 
-// Secondary Palette (Sage Green accent tones)
-val SageGreen = Color(0xFF6B8E72)
-val SageGreenLight = Color(0xFFE2EBE4)
-val SageGreenDark = Color(0xFF2F4534)
+// Primary — terracotta / crimson
+val Terracotta = Color(0xFFC96A4B)
+val TerracottaDark = Color(0xFFA84E34)
+val Crimson = Color(0xFFB3453E)
+val CrimsonLight = Color(0xFFE8A79E)
 
-// Light Theme Surface & Backgrounds
-val CreamBackground = Color(0xFFFAF7F2)
-val CreamSurface = Color(0xFFFFFDF9)
+// Health / nutrition accents — sage green
+val SageGreen = Color(0xFF8AA083)
+val SageGreenLight = Color(0xFFDCE6D5)
+val SageGreenDark = Color(0xFF5F7358)
 
-// Neutral & Card Borders
-val WarmCardBorder = Color(0xFFEDE4DB)
+// Urgency indicators
+val UrgencyCritical = Color(0xFFB3453E)
+val UrgencyHigh = Color(0xFFD98A3D)
+val UrgencyModerate = Color(0xFFD9B23D)
+
+// Neutrals
+val InkBrown = Color(0xFF3B2E28)
 val MutedBrown = Color(0xFF7A6A60)
-val Divider = Color(0xFFDCD2C8)
-
-// Status & Indicators
-
-
-val UrgencyCritical = Color(0xFFE53935) // Red
-val UrgencyHigh = Color(0xFFFB8C00)     // Orange
-val UrgencyModerate = Color(0xFFFDD835) // Yellow
-val UrgencyLow = Color(0xFF4CAF50)      // Green
+val Divider = Color(0xFFEDE1D3)

@@ -62,6 +62,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun signUpWithEmail(email: String, password: String): Result<String> = try {
         val result = auth.createUserWithEmailAndPassword(email, password).await()
         val uid = result.user?.uid ?: error("No UID returned from Firebase")
+        // Seed a minimal profile node; role/details are filled in during onboarding.
         usersRef.child(uid).setValue(LifeLineUser(uid = uid, email = email, role = UserRole.UNSET)).await()
         Result.success(uid)
     } catch (e: Exception) {

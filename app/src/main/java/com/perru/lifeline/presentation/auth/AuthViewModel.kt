@@ -51,11 +51,15 @@ class AuthViewModel @Inject constructor(
     fun signIn(email: String, password: String, onSuccess: () -> Unit) {
         _loginState.value = _loginState.value.copy(isLoading = true, errorMessage = null)
         viewModelScope.launch {
-            authRepository.signInWithEmail(email, password).onSuccess {
+            val result = authRepository.signInWithEmail(email, password)
+            result.onSuccess {
                 _loginState.value = AuthFormState()
                 onSuccess()
             }.onFailure {
-                _loginState.value = _loginState.value.copy(isLoading = false, errorMessage = it.message ?: "Sign in failed")
+                _loginState.value = _loginState.value.copy(
+                    isLoading = false,
+                    errorMessage = it.message ?: "Sign in failed"
+                )
             }
         }
     }
@@ -63,19 +67,26 @@ class AuthViewModel @Inject constructor(
     fun signUp(email: String, password: String, onSuccess: () -> Unit) {
         _signUpState.value = _signUpState.value.copy(isLoading = true, errorMessage = null)
         viewModelScope.launch {
-            authRepository.signUpWithEmail(email, password).onSuccess {
+            val result = authRepository.signUpWithEmail(email, password)
+            result.onSuccess {
                 _signUpState.value = AuthFormState()
                 onSuccess()
             }.onFailure {
-                _signUpState.value = _signUpState.value.copy(isLoading = false, errorMessage = it.message ?: "Sign up failed")
+                _signUpState.value = _signUpState.value.copy(
+                    isLoading = false,
+                    errorMessage = it.message ?: "Sign up failed"
+                )
             }
         }
     }
 
     fun signInWithGoogleIdToken(idToken: String, onSuccess: () -> Unit) {
         viewModelScope.launch {
-            authRepository.signInWithGoogle(idToken).onSuccess { onSuccess() }
-                .onFailure { _loginState.value = _loginState.value.copy(errorMessage = it.message) }
+            authRepository.signInWithGoogle(idToken).onSuccess {
+                onSuccess()
+            }.onFailure {
+                _loginState.value = _loginState.value.copy(errorMessage = it.message)
+            }
         }
     }
 
@@ -86,19 +97,31 @@ class AuthViewModel @Inject constructor(
     }
 
     fun completeOnboarding(
-        uid: String, email: String, role: UserRole, form: OnboardingFormState, onSuccess: () -> Unit
+        uid: String,
+        email: String,
+        role: UserRole,
+        form: OnboardingFormState,
+        onSuccess: () -> Unit
     ) {
         _onboardingState.value = form.copy(isLoading = true, errorMessage = null)
         viewModelScope.launch {
             val user = LifeLineUser(
-                uid = uid, email = email, displayName = form.displayName, role = role,
-                bloodGroup = form.bloodGroup, city = form.city, hospitalName = form.hospitalName
+                uid = uid,
+                email = email,
+                displayName = form.displayName,
+                role = role,
+                bloodGroup = form.bloodGroup,
+                city = form.city,
+                hospitalName = form.hospitalName
             )
             authRepository.completeOnboarding(user).onSuccess {
                 _onboardingState.value = OnboardingFormState()
                 onSuccess()
             }.onFailure {
-                _onboardingState.value = _onboardingState.value.copy(isLoading = false, errorMessage = it.message)
+                _onboardingState.value = _onboardingState.value.copy(
+                    isLoading = false,
+                    errorMessage = it.message
+                )
             }
         }
     }
