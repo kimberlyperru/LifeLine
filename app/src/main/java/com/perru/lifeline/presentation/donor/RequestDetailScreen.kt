@@ -179,7 +179,7 @@ fun RequestDetailScreen(
                         result.onSuccess { pledgeConfirmed = true }.onFailure { errorMessage = it.message }
                     }
                 },
-                enabled = !pledgeInFlight && !pledgeConfirmed && !alreadyFulfilled,
+                enabled = !pledgeInFlight && !pledgeConfirmed && !alreadyFulfilled && (donor == null || isCompatible == true),
                 modifier = Modifier.fillMaxWidth().height(56.dp),
                 shape = MaterialTheme.shapes.large
             ) {

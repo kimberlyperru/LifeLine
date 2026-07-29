@@ -1,11 +1,13 @@
 package com.perru.lifeline.presentation.onboarding
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MonitorHeart
@@ -14,12 +16,17 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.lerp
 import com.perru.lifeline.ui.theme.Crimson
 import com.perru.lifeline.ui.theme.SageGreen
 import com.perru.lifeline.ui.theme.SageGreenLight
@@ -27,6 +34,7 @@ import com.perru.lifeline.ui.theme.Terracotta
 import com.perru.lifeline.ui.theme.CrimsonLight
 import com.perru.lifeline.util.OnboardingPrefs
 import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
 
 private data class OnboardingPage(
     val icon: ImageVector,
@@ -64,11 +72,13 @@ private val pages = listOf(
 @Composable
 fun OnboardingScreen(onFinished: () -> Unit) {
     val context = LocalContext.current
+    val haptic = LocalHapticFeedback.current
     val pagerState = rememberPagerState(pageCount = { pages.size })
     val scope = rememberCoroutineScope()
     val isLastPage = pagerState.currentPage == pages.lastIndex
 
     fun finish() {
+        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
         OnboardingPrefs.markOnboardingSeen(context)
         onFinished()
     }
@@ -83,18 +93,52 @@ fun OnboardingScreen(onFinished: () -> Unit) {
 
         HorizontalPager(state = pagerState, modifier = Modifier.weight(1f)) { pageIndex ->
             val page = pages[pageIndex]
+            val pageOffset = (
+                (pagerState.currentPage - pageIndex) + pagerState.currentPageOffsetFraction
+            ).absoluteValue
+
             Column(
-                modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 32.dp)
+                    .graphicsLayer {
+                        // Fade and scale title/subtitle based on offset
+                        alpha = lerp(
+                            start = 0.5f,
+                            stop = 1f,
+                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                        )
+                    },
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
                 Box(
                     modifier = Modifier
                         .size(160.dp)
+                        .graphicsLayer {
+                            // Fancy scaling and rotating effect for the icon background
+                            val scale = lerp(
+                                start = 0.8f,
+                                stop = 1f,
+                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                            )
+                            scaleX = scale
+                            scaleY = scale
+                            rotationZ = lerp(
+                                start = -30f,
+                                stop = 0f,
+                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                            )
+                        }
                         .background(page.accentSoft, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(page.icon, contentDescription = null, tint = page.accent, modifier = Modifier.size(72.dp))
+                    Icon(
+                        page.icon,
+                        contentDescription = null,
+                        tint = page.accent,
+                        modifier = Modifier.size(72.dp)
+                    )
                 }
                 Spacer(Modifier.height(36.dp))
                 Text(
@@ -113,20 +157,29 @@ fun OnboardingScreen(onFinished: () -> Unit) {
             }
         }
 
+        // Expanding Pill Indicator
         Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
-            horizontalArrangement = Arrangement.Center
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 20.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             pages.indices.forEach { index ->
                 val selected = pagerState.currentPage == index
+                val width by animateDpAsState(
+                    targetValue = if (selected) 24.dp else 8.dp,
+                    label = "width"
+                )
                 Box(
                     modifier = Modifier
                         .padding(horizontal = 4.dp)
-                        .size(if (selected) 10.dp else 8.dp)
+                        .height(8.dp)
+                        .width(width)
+                        .clip(RoundedCornerShape(4.dp))
                         .background(
                             if (selected) pages[pagerState.currentPage].accent
-                            else MaterialTheme.colorScheme.outline,
-                            CircleShape
+                            else MaterialTheme.colorScheme.outlineVariant
                         )
                 )
             }
@@ -135,6 +188,7 @@ fun OnboardingScreen(onFinished: () -> Unit) {
         Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 32.dp)) {
             Button(
                 onClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     if (isLastPage) {
                         finish()
                     } else {

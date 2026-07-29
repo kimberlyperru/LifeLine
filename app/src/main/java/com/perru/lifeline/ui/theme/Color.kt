@@ -25,5 +25,7 @@ val UrgencyModerate = Color(0xFFD9B23D)
 
 // Neutrals
 val InkBrown = Color(0xFF3B2E28)
+val DarkBackground = Color(0xFF1A1411)
+val DarkSurface = Color(0xFF261D18)
 val MutedBrown = Color(0xFF7A6A60)
 val Divider = Color(0xFFEDE1D3)

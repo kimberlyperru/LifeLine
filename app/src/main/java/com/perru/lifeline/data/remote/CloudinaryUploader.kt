@@ -36,8 +36,9 @@ class CloudinaryUploader @Inject constructor(
     private val client = OkHttpClient()
 
     suspend fun uploadImage(uri: Uri): Result<String> = withContext(Dispatchers.IO) {
+        var tempFile: File? = null
         try {
-            val tempFile = copyUriToTempFile(uri)
+            tempFile = copyUriToTempFile(uri)
             val body = MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("upload_preset", BuildConfig.CLOUDINARY_UPLOAD_PRESET)
@@ -49,24 +50,33 @@ class CloudinaryUploader @Inject constructor(
                 )
                 .build()
 
+            val cloudName = BuildConfig.CLOUDINARY_CLOUD_NAME
+            if (cloudName.isBlank() || cloudName == "sckangrp") {
+                 android.util.Log.w("Cloudinary", "Cloudinary cloud name appears to be the default/empty.")
+            }
+
             val request = Request.Builder()
-                .url("https://api.cloudinary.com/v1_1/${BuildConfig.CLOUDINARY_CLOUD_NAME}/image/upload")
+                .url("https://api.cloudinary.com/v1_1/$cloudName/image/upload")
                 .post(body)
                 .build()
 
             client.newCall(request).execute().use { response ->
-                tempFile.delete()
                 val responseBody = response.body?.string().orEmpty()
+                android.util.Log.d("Cloudinary", "Response: $responseBody")
+                
                 if (!response.isSuccessful) {
                     val message = runCatching { JSONObject(responseBody).getJSONObject("error").getString("message") }
                         .getOrDefault("Upload failed (HTTP ${response.code})")
-                    return@withContext Result.failure(IllegalStateException(message))
+                    return@withContext Result.failure(IllegalStateException("Cloudinary Error: $message"))
                 }
                 val secureUrl = JSONObject(responseBody).getString("secure_url")
                 Result.success(secureUrl)
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            android.util.Log.e("Cloudinary", "Upload exception: ${e.message}", e)
+            Result.failure(Exception("Image upload connection error: ${e.message}", e))
+        } finally {
+            tempFile?.delete()
         }
     }
 

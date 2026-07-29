@@ -63,12 +63,18 @@ class DonorViewModel @Inject constructor(
     }
 
     fun pledge(request: BloodRequest, donor: LifeLineUser, onResult: (Result<Unit>) -> Unit) {
+        val donorGroup = donor.bloodGroup
+        if (donorGroup == null || !BloodCompatibility.isCompatible(donorGroup, request.bloodGroup)) {
+            onResult(Result.failure(IllegalStateException("Incompatible blood type for this request.")))
+            return
+        }
+
         viewModelScope.launch {
             val pledge = Pledge(
                 requestId = request.id,
                 donorUid = donor.uid,
                 donorName = donor.displayName,
-                donorBloodGroup = donor.bloodGroup ?: request.bloodGroup
+                donorBloodGroup = donorGroup
             )
             onResult(requestRepository.pledgeToRequest(pledge))
         }

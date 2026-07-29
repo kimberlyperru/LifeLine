@@ -6,7 +6,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AddPhotoAlternate
@@ -14,7 +16,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -23,7 +24,6 @@ import com.perru.lifeline.domain.model.BloodComponent
 import com.perru.lifeline.domain.model.BloodGroup
 import com.perru.lifeline.domain.model.BloodRequest
 import com.perru.lifeline.domain.model.UrgencyLevel
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateRequestScreen(
@@ -33,6 +33,7 @@ fun CreateRequestScreen(
 ) {
     val hospital by viewModel.currentUser.collectAsState()
     val createState by viewModel.createState.collectAsState()
+    val scrollState = rememberScrollState()
 
     var bloodGroup by remember { mutableStateOf(BloodGroup.O_POS) }
     var component by remember { mutableStateOf(BloodComponent.WHOLE_BLOOD) }
@@ -66,6 +67,7 @@ fun CreateRequestScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .verticalScroll(scrollState)
                 .padding(20.dp)
         ) {
             Text("Blood group needed", style = MaterialTheme.typography.labelLarge)
@@ -161,7 +163,17 @@ fun CreateRequestScreen(
 
             createState.errorMessage?.let {
                 Spacer(Modifier.height(12.dp))
-                Text(it, color = MaterialTheme.colorScheme.error)
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        it,
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(12.dp)
+                    )
+                }
             }
 
             Spacer(Modifier.height(24.dp))

@@ -100,14 +100,16 @@ class AuthRepositoryImpl @Inject constructor(
         usersRef.child(uid).child("role").setValue(role.name).await()
         Result.success(Unit)
     } catch (e: Exception) {
-        Result.failure(e)
+        android.util.Log.e("AuthRepo", "Failed to set user role: ${e.message}", e)
+        Result.failure(Exception("Failed to save role to database: ${e.message}", e))
     }
 
     override suspend fun completeOnboarding(user: LifeLineUser): Result<Unit> = try {
         usersRef.child(user.uid).setValue(user).await()
         Result.success(Unit)
     } catch (e: Exception) {
-        Result.failure(e)
+        android.util.Log.e("AuthRepo", "Failed to complete onboarding: ${e.message}", e)
+        Result.failure(Exception("Failed to save profile: ${e.message}", e))
     }
 
     override suspend fun getUserProfile(uid: String): Result<LifeLineUser?> = try {

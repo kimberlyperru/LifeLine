@@ -1,5 +1,7 @@
 package com.perru.lifeline.presentation.auth
 
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,6 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -33,10 +39,24 @@ fun LoginScreen(
     val state by viewModel.loginState.collectAsState()
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    val haptic = LocalHapticFeedback.current
+
+    // Error Shake Animation
+    val shakeOffset = remember { Animatable(0f) }
+    LaunchedEffect(state.errorMessage) {
+        if (state.errorMessage != null) {
+            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            repeat(4) {
+                shakeOffset.animateTo(
+                    targetValue = if (it % 2 == 0) 15f else -15f,
+                    animationSpec = spring(dampingRatio = Spring.DampingRatioHighBouncy, stiffness = Spring.StiffnessMedium)
+                )
+            }
+            shakeOffset.animateTo(0f)
+        }
+    }
 
     Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        // Warm gradient hero, echoing the splash screen so sign-in feels like a
-        // continuation of the same welcome rather than a cold form.
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -72,7 +92,8 @@ fun LoginScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 28.dp, vertical = 32.dp),
+                .padding(horizontal = 28.dp, vertical = 32.dp)
+                .graphicsLayer { translationX = shakeOffset.value },
             verticalArrangement = Arrangement.Top
         ) {
             OutlinedTextField(
@@ -95,26 +116,53 @@ fun LoginScreen(
 
             Spacer(Modifier.height(24.dp))
             Button(
-                onClick = { viewModel.signIn(email, password, onLoginSuccess) },
+                onClick = { 
+                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                    viewModel.signIn(email, password, onLoginSuccess) 
+                },
                 enabled = email.isNotBlank() && password.isNotBlank() && !state.isLoading,
                 modifier = Modifier.fillMaxWidth().height(54.dp),
                 shape = MaterialTheme.shapes.large
             ) {
                 if (state.isLoading) {
-                    CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+                    CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp, color = Color.White)
                 } else {
                     Text("Sign In")
                 }
             }
 
             Spacer(Modifier.height(16.dp))
+            
+            // Social Login - Google
+            OutlinedButton(
+                onClick = { haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove) },
+                modifier = Modifier.fillMaxWidth().height(54.dp),
+                shape = MaterialTheme.shapes.large,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.logo_lifeline), // Placeholder for Google Logo
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                        tint = Color.Unspecified
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    Text("Continue with Google", color = MaterialTheme.colorScheme.onSurface)
+                }
+            }
+
+            Spacer(Modifier.height(24.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Text("New to LifeLine? ", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text(
                     "Create an account",
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.clickable(onClick = onNavigateToSignUp)
+                    modifier = Modifier.clickable { 
+                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        onNavigateToSignUp() 
+                    }
                 )
             }
         }

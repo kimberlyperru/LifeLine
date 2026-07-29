@@ -1,12 +1,14 @@
 package com.perru.lifeline.ui.theme
 
+import android.app.Activity
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import android.app.Activity
 
 private val LifeLineLightColors = lightColorScheme(
     primary = Terracotta,
@@ -27,22 +29,42 @@ private val LifeLineLightColors = lightColorScheme(
     outline = Divider
 )
 
-/**
- * LifeLine is deliberately a light, warm brand (cream/terracotta/sage) — it does
- * NOT follow the system dark-mode setting. Auto-switching to dark previously left
- * many components on Material's generic dark defaults (since only a handful of
- * roles were customized for dark mode), which read as a muddy, unbranded dark
- * screen. Always rendering light keeps every screen on-brand and legible.
- */
+private val LifeLineDarkColors = darkColorScheme(
+    primary = Terracotta,
+    onPrimary = CreamSurface,
+    primaryContainer = TerracottaDark,
+    onPrimaryContainer = CreamSurface,
+    secondary = SageGreen,
+    onSecondary = CreamSurface,
+    secondaryContainer = SageGreenDark,
+    onSecondaryContainer = SageGreenLight,
+    background = DarkBackground,
+    onBackground = CreamSurface,
+    surface = DarkSurface,
+    onSurface = CreamSurface,
+    surfaceVariant = InkBrown,
+    onSurfaceVariant = MutedBrown,
+    error = UrgencyCritical,
+    outline = MutedBrown
+)
+
 @Composable
-fun LifeLineTheme(content: @Composable () -> Unit) {
-    val colorScheme = LifeLineLightColors
+fun LifeLineTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
+) {
+    val colorScheme = if (darkTheme) LifeLineDarkColors else LifeLineLightColors
     val view = LocalView.current
     if (!view.isInEditMode) {
         val context = view.context
         if (context is Activity) {
-            WindowCompat.getInsetsController(context.window, view).isAppearanceLightStatusBars = true
-            context.window.statusBarColor = colorScheme.background.toArgb()
+            val window = context.window
+            val insetsController = WindowCompat.getInsetsController(window, view)
+            
+            // In dark mode, we want light status bar icons (false for appearanceLightStatusBars)
+            insetsController.isAppearanceLightStatusBars = !darkTheme
+            window.statusBarColor = colorScheme.background.toArgb()
+            window.navigationBarColor = colorScheme.background.toArgb()
         }
     }
 
