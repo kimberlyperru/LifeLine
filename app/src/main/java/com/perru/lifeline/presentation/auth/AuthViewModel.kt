@@ -2,6 +2,7 @@ package com.perru.lifeline.presentation.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 import com.perru.lifeline.domain.model.BloodGroup
 import com.perru.lifeline.domain.model.LifeLineUser
 import com.perru.lifeline.domain.model.UserRole
@@ -105,15 +106,26 @@ class AuthViewModel @Inject constructor(
     ) {
         _onboardingState.value = form.copy(isLoading = true, errorMessage = null)
         viewModelScope.launch {
+            // Source email primarily from Auth, secondary from form, tertiary from param
+            val firebaseEmail = FirebaseAuth.getInstance().currentUser?.email
+            val finalEmail = firebaseEmail?.takeIf { it.isNotBlank() } 
+                ?: email.takeIf { it.isNotBlank() } 
+                ?: ""
+
             val user = LifeLineUser(
                 uid = uid,
-                email = email,
+                email = finalEmail,
                 displayName = form.displayName,
                 role = role,
                 bloodGroup = form.bloodGroup,
                 city = form.city,
                 hospitalName = form.hospitalName
             )
+            
+            if (user.email.isBlank()) {
+                android.util.Log.e("AuthViewModel", "Critical: Saving user with blank email!")
+            }
+
             authRepository.completeOnboarding(user).onSuccess {
                 _onboardingState.value = OnboardingFormState()
                 onSuccess()

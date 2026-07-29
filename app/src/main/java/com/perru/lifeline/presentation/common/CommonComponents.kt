@@ -15,6 +15,7 @@ import com.perru.lifeline.domain.model.UrgencyLevel
 import com.perru.lifeline.ui.theme.UrgencyCritical
 import com.perru.lifeline.ui.theme.UrgencyHigh
 import com.perru.lifeline.ui.theme.UrgencyModerate
+import com.perru.lifeline.util.TimeUtils
 
 fun UrgencyLevel.color(): Color = when (this) {
     UrgencyLevel.CRITICAL -> UrgencyCritical
@@ -73,7 +74,15 @@ fun RequestCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                BloodGroupChip(label = request.bloodGroup.label)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    BloodGroupChip(label = request.bloodGroup.label)
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = TimeUtils.toRelativeTime(request.createdAtMillis),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
                 UrgencyBadge(urgency = request.urgency)
             }
             Spacer(Modifier.height(12.dp))

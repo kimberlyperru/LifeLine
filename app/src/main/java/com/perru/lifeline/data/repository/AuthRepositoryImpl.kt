@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -60,53 +61,63 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun signUpWithEmail(email: String, password: String): Result<String> = try {
-        val result = auth.createUserWithEmailAndPassword(email, password).await()
-        val uid = result.user?.uid ?: error("No UID returned from Firebase")
-        // Seed a minimal profile node; role/details are filled in during onboarding.
-        usersRef.child(uid).setValue(LifeLineUser(uid = uid, email = email, role = UserRole.UNSET)).await()
-        Result.success(uid)
+        withTimeout(15000) {
+            val result = auth.createUserWithEmailAndPassword(email, password).await()
+            val uid = result.user?.uid ?: error("No UID returned from Firebase")
+            // Seed a minimal profile node; role/details are filled in during onboarding.
+            usersRef.child(uid).setValue(LifeLineUser(uid = uid, email = email, role = UserRole.UNSET)).await()
+            Result.success(uid)
+        }
     } catch (e: Exception) {
         Result.failure(e)
     }
 
     override suspend fun signInWithEmail(email: String, password: String): Result<String> = try {
-        val result = auth.signInWithEmailAndPassword(email, password).await()
-        Result.success(result.user?.uid ?: error("No UID returned from Firebase"))
+        withTimeout(15000) {
+            val result = auth.signInWithEmailAndPassword(email, password).await()
+            Result.success(result.user?.uid ?: error("No UID returned from Firebase"))
+        }
     } catch (e: Exception) {
         Result.failure(e)
     }
 
     override suspend fun signInWithGoogle(idToken: String): Result<String> = try {
-        val credential = GoogleAuthProvider.getCredential(idToken, null)
-        val result = auth.signInWithCredential(credential).await()
-        val uid = result.user?.uid ?: error("No UID returned from Firebase")
-        val existing = usersRef.child(uid).get().await()
-        if (!existing.exists()) {
-            usersRef.child(uid).setValue(
-                LifeLineUser(
-                    uid = uid,
-                    email = result.user?.email.orEmpty(),
-                    displayName = result.user?.displayName.orEmpty(),
-                    role = UserRole.UNSET
-                )
-            ).await()
+        withTimeout(15000) {
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
+            val result = auth.signInWithCredential(credential).await()
+            val uid = result.user?.uid ?: error("No UID returned from Firebase")
+            val existing = usersRef.child(uid).get().await()
+            if (!existing.exists()) {
+                usersRef.child(uid).setValue(
+                    LifeLineUser(
+                        uid = uid,
+                        email = result.user?.email.orEmpty(),
+                        displayName = result.user?.displayName.orEmpty(),
+                        role = UserRole.UNSET
+                    )
+                ).await()
+            }
+            Result.success(uid)
         }
-        Result.success(uid)
     } catch (e: Exception) {
         Result.failure(e)
     }
 
     override suspend fun setUserRole(uid: String, role: UserRole): Result<Unit> = try {
-        usersRef.child(uid).child("role").setValue(role.name).await()
-        Result.success(Unit)
+        withTimeout(10000) {
+            usersRef.child(uid).child("role").setValue(role.name).await()
+            Result.success(Unit)
+        }
     } catch (e: Exception) {
         android.util.Log.e("AuthRepo", "Failed to set user role: ${e.message}", e)
         Result.failure(Exception("Failed to save role to database: ${e.message}", e))
     }
 
     override suspend fun completeOnboarding(user: LifeLineUser): Result<Unit> = try {
-        usersRef.child(user.uid).setValue(user).await()
-        Result.success(Unit)
+        withTimeout(10000) {
+            usersRef.child(user.uid).setValue(user).await()
+            Result.success(Unit)
+        }
     } catch (e: Exception) {
         android.util.Log.e("AuthRepo", "Failed to complete onboarding: ${e.message}", e)
         Result.failure(Exception("Failed to save profile: ${e.message}", e))

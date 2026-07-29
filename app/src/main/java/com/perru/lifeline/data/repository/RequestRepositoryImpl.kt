@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -58,14 +59,16 @@ class RequestRepositoryImpl @Inject constructor(
     }
 
     override suspend fun pledgeToRequest(pledge: Pledge): Result<Unit> = try {
-        // Atomically increment unitsPledged (and flip status if now fulfilled) using
-        // a Realtime Database transaction — this safely resolves concurrent pledges,
-        // the RTDB equivalent of a Firestore transactional read-modify-write.
-        runTransactionOnRequest(pledge.requestId)
-        val pledgeRef = pledgesRef.push()
-        val id = pledgeRef.key ?: error("Could not generate a pledge ID")
-        pledgeRef.setValue(pledge.copy(id = id)).await()
-        Result.success(Unit)
+        withTimeout(10000) {
+            // Atomically increment unitsPledged (and flip status if now fulfilled) using
+            // a Realtime Database transaction — this safely resolves concurrent pledges,
+            // the RTDB equivalent of a Firestore transactional read-modify-write.
+            runTransactionOnRequest(pledge.requestId)
+            val pledgeRef = pledgesRef.push()
+            val id = pledgeRef.key ?: error("Could not generate a pledge ID")
+            pledgeRef.setValue(pledge.copy(id = id)).await()
+            Result.success(Unit)
+        }
     } catch (e: Exception) {
         Result.failure(e)
     }

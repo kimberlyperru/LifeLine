@@ -43,6 +43,8 @@ fun HospitalDashboardScreen(
 ) {
     val hospital by viewModel.currentUser.collectAsState()
     val requests by viewModel.myRequests.collectAsState()
+    val totalPledges by viewModel.totalPledges.collectAsState()
+    val livesSaved by viewModel.livesSaved.collectAsState()
     var showSwitchRoleDialog by remember { mutableStateOf(false) }
     var crisisMode by remember { mutableStateOf(false) }
     val haptic = LocalHapticFeedback.current
@@ -100,14 +102,14 @@ fun HospitalDashboardScreen(
                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             StatCard(
                                 title = "Lives Saved",
-                                value = "128",
+                                value = livesSaved.toString(),
                                 icon = Icons.Filled.VolunteerActivism,
                                 modifier = Modifier.weight(1f),
                                 color = SageGreen
                             )
                             StatCard(
                                 title = "Pledges",
-                                value = "14",
+                                value = totalPledges.toString(),
                                 icon = Icons.Filled.People,
                                 modifier = Modifier.weight(1f),
                                 color = MaterialTheme.colorScheme.primary

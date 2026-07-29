@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.perru.lifeline.data.remote.CloudinaryUploader
 import com.perru.lifeline.domain.model.BloodRequest
 import com.perru.lifeline.domain.model.LifeLineUser
+import com.perru.lifeline.domain.model.RequestStatus
 import com.perru.lifeline.domain.repository.AuthRepository
 import com.perru.lifeline.domain.repository.RequestRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -41,6 +43,14 @@ class HospitalViewModel @Inject constructor(
             if (user == null) flowOf(emptyList()) else requestRepository.requestsByHospitalFlow(user.uid)
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val totalPledges: StateFlow<Int> = myRequests.map { requests ->
+        requests.filter { it.status == RequestStatus.ACTIVE }.sumOf { it.unitsPledged }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
+    val livesSaved: StateFlow<Int> = myRequests.map { requests ->
+        requests.filter { it.status == RequestStatus.FULFILLED }.sumOf { it.unitsPledged }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
 
     private val _createState = MutableStateFlow(CreateRequestState())
     val createState: StateFlow<CreateRequestState> = _createState.asStateFlow()

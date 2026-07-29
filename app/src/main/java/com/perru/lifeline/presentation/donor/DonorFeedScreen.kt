@@ -343,50 +343,63 @@ private fun EligibilityCard(lastDonationMillis: Long?) {
     val progress = if (lastDonationMillis == null) 1f else (daysSince!!.toFloat() / windowDays).coerceIn(0f, 1f)
     val eligible = lastDonationMillis == null || daysRemaining <= 0
 
+    val backgroundBrush = if (eligible) {
+        Brush.horizontalGradient(listOf(SageGreen, SageGreenLight))
+    } else {
+        Brush.linearGradient(listOf(MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.colorScheme.secondaryContainer))
+    }
+
     Card(
         shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().height(110.dp)
     ) {
-        Row(
-            modifier = Modifier.padding(20.dp),
-            verticalAlignment = Alignment.CenterVertically
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(backgroundBrush)
         ) {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.size(72.dp)) {
-                CircularProgressIndicator(
-                    progress = { progress },
-                    strokeWidth = 6.dp,
-                    strokeCap = StrokeCap.Round,
-                    color = MaterialTheme.colorScheme.secondary,
-                    trackColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.15f),
-                    modifier = Modifier.fillMaxSize()
-                )
-                Text(
-                    text = if (eligible) "Ready" else "${daysRemaining}d",
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
-                )
-            }
-            Spacer(Modifier.width(16.dp))
-            Column {
-                Text(
-                    if (eligible) "You're eligible to donate!" else "Almost there",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
-                )
-                Spacer(Modifier.height(2.dp))
-                Text(
-                    if (eligible) {
-                        "Your body has fully replenished — you're good to give again."
-                    } else {
-                        "$daysRemaining of $windowDays days left until your next eligible donation."
-                    },
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
-                )
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.size(72.dp)) {
+                    CircularProgressIndicator(
+                        progress = { progress },
+                        strokeWidth = 6.dp,
+                        strokeCap = StrokeCap.Round,
+                        color = if (eligible) Color.White else MaterialTheme.colorScheme.secondary,
+                        trackColor = (if (eligible) Color.White else MaterialTheme.colorScheme.secondary).copy(alpha = 0.2f),
+                        modifier = Modifier.fillMaxSize()
+                    )
+                    Text(
+                        text = if (eligible) "Ready" else "${daysRemaining}d",
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = if (eligible) Color.White else MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
+                Spacer(Modifier.width(16.dp))
+                Column {
+                    Text(
+                        if (eligible) "You're eligible to donate!" else "Almost there",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = if (eligible) Color.White else MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                    Spacer(Modifier.height(2.dp))
+                    Text(
+                        if (eligible) {
+                            "Your body has fully replenished — ready to save a life?"
+                        } else {
+                            "$daysRemaining of $windowDays days left until your next eligible donation."
+                        },
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = (if (eligible) Color.White else MaterialTheme.colorScheme.onSecondaryContainer).copy(alpha = 0.8f)
+                    )
+                }
             }
         }
     }
