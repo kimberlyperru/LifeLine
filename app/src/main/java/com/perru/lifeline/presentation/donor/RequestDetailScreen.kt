@@ -15,11 +15,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.perru.lifeline.R
 import com.perru.lifeline.domain.model.BloodGroup
 import com.perru.lifeline.domain.model.RequestStatus
 import com.perru.lifeline.presentation.common.BloodGroupChip
@@ -95,13 +98,24 @@ fun RequestDetailScreen(
 
             if (request.verificationImageUrl.isNotBlank()) {
                 Spacer(Modifier.height(16.dp))
-                Text("Verification", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                Text("Verification document", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
                 Spacer(Modifier.height(8.dp))
-                AsyncImage(
-                    model = request.verificationImageUrl,
-                    contentDescription = "Hospital verification document",
-                    modifier = Modifier.fillMaxWidth().height(180.dp)
-                )
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    AsyncImage(
+                        model = request.verificationImageUrl,
+                        contentDescription = "Hospital verification document",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop,
+                        placeholder = painterResource(id = R.drawable.ic_launcher_background), // Fallback placeholder
+                        error = painterResource(id = R.drawable.ic_launcher_background) // Error placeholder
+                    )
+                }
             }
 
             // --- Compatibility check ---

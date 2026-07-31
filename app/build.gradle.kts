@@ -21,7 +21,7 @@ android {
 
         // Fixed field name key
         buildConfigField("String", "CLOUDINARY_CLOUD_NAME", "\"sckangrp\"")
-        buildConfigField("String", "CLOUDINARY_UPLOAD_PRESET", "\"LifeLine\"")
+        buildConfigField("String", "CLOUDINARY_UPLOAD_PRESET", "\"lifeline\"")
     }
 
     buildTypes {

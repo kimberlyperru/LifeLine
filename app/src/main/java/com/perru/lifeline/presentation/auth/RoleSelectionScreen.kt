@@ -1,11 +1,15 @@
 package com.perru.lifeline.presentation.auth
 
 import androidx.compose.animation.*
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocalHospital
@@ -13,12 +17,16 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -40,6 +48,7 @@ fun RoleSelectionScreen(
     var selectedRole by remember { mutableStateOf(preselectedRole) }
     val onboardingState by viewModel.onboardingState.collectAsState()
     val haptic = LocalHapticFeedback.current
+    val scrollState = rememberScrollState()
 
     var displayName by remember { mutableStateOf("") }
     var city by remember { mutableStateOf("") }
@@ -59,8 +68,11 @@ fun RoleSelectionScreen(
         )
 
         Column(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 24.dp, vertical = 32.dp),
-            verticalArrangement = Arrangement.Center
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(horizontal = 24.dp, vertical = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AnimatedContent(
                 targetState = selectedRole,
@@ -74,18 +86,38 @@ fun RoleSelectionScreen(
                 label = "RoleSelectionContent"
             ) { role ->
                 if (role == null) {
-                    Column {
-                        Text(stringResource(R.string.how_use_lifeline), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-                        Spacer(Modifier.height(6.dp))
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Box(
+                            modifier = Modifier
+                                .size(240.dp)
+                                .padding(bottom = 8.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.img_role_choice),
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Fit
+                            )
+                        }
+                        
+                        Text(
+                            stringResource(R.string.how_use_lifeline),
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(Modifier.height(8.dp))
                         Text(
                             stringResource(R.string.role_subtitle),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center
                         )
-                        Spacer(Modifier.height(28.dp))
+                        Spacer(Modifier.height(32.dp))
 
                         RoleCard(
-                            title = stringResource(R.string.role_donor_title),
+                            title = "I want to save lives",
                             subtitle = stringResource(R.string.role_donor_subtitle),
                             icon = Icons.Filled.Favorite,
                             accent = Crimson,
@@ -95,9 +127,9 @@ fun RoleSelectionScreen(
                                 selectedRole = UserRole.DONOR 
                             }
                         )
-                        Spacer(Modifier.height(16.dp))
+                        Spacer(Modifier.height(20.dp))
                         RoleCard(
-                            title = stringResource(R.string.role_hospital_title),
+                            title = "I need blood for patients",
                             subtitle = stringResource(R.string.role_hospital_subtitle),
                             icon = Icons.Filled.LocalHospital,
                             accent = SageGreen,
@@ -202,21 +234,21 @@ private fun RoleCard(
 ) {
     Card(
         onClick = onClick,
-        shape = MaterialTheme.shapes.large,
+        shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Row(modifier = Modifier.padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier = Modifier.padding(24.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(
-                modifier = Modifier.size(56.dp).background(accentSoft, CircleShape),
+                modifier = Modifier.size(64.dp).background(accentSoft, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(icon, contentDescription = null, tint = accent, modifier = Modifier.size(28.dp))
+                Icon(icon, contentDescription = null, tint = accent, modifier = Modifier.size(32.dp))
             }
-            Spacer(Modifier.width(16.dp))
+            Spacer(Modifier.width(20.dp))
             Column {
-                Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(4.dp))
                 Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }

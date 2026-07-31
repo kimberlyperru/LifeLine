@@ -16,6 +16,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -165,13 +167,21 @@ fun CreateRequestScreen(
             Text(stringResource(R.string.verification_doc_optional), style = MaterialTheme.typography.labelLarge)
             Spacer(Modifier.height(8.dp))
             if (imageUri != null) {
-                AsyncImage(
-                    model = imageUri,
-                    contentDescription = stringResource(R.string.cd_selected_verification),
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(160.dp)
-                )
+                        .height(200.dp),
+                    shape = MaterialTheme.shapes.medium,
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    AsyncImage(
+                        model = imageUri,
+                        contentDescription = stringResource(R.string.cd_selected_verification),
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop,
+                        error = painterResource(id = R.drawable.ic_launcher_background)
+                    )
+                }
                 Spacer(Modifier.height(8.dp))
                 TextButton(onClick = { imagePicker.launch("image/*") }) {
                     Text(stringResource(R.string.change_image))

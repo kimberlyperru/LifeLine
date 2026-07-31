@@ -14,6 +14,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,15 +34,27 @@ import javax.inject.Singleton
 class CloudinaryUploader @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-    private val client = OkHttpClient()
+    private val client = OkHttpClient.Builder()
+        .connectTimeout(60, TimeUnit.SECONDS)
+        .writeTimeout(60, TimeUnit.SECONDS)
+        .readTimeout(60, TimeUnit.SECONDS)
+        .build()
 
     suspend fun uploadImage(uri: Uri): Result<String> = withContext(Dispatchers.IO) {
         var tempFile: File? = null
         try {
+            val cloudName = BuildConfig.CLOUDINARY_CLOUD_NAME
+            val uploadPreset = BuildConfig.CLOUDINARY_UPLOAD_PRESET
+
+            // Warn if credentials look like defaults, but don't block execution anymore
+            if (cloudName == "sckangrp" || uploadPreset == "LifeLine") {
+                android.util.Log.w("Cloudinary", "Warning: Using default Cloudinary credentials. If this is intentional, ignore this. Otherwise, update build.gradle.kts")
+            }
+
             tempFile = copyUriToTempFile(uri)
             val body = MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("upload_preset", BuildConfig.CLOUDINARY_UPLOAD_PRESET)
+                .addFormDataPart("upload_preset", uploadPreset)
                 .addFormDataPart("folder", "lifeline_verification")
                 .addFormDataPart(
                     "file",
@@ -49,11 +62,6 @@ class CloudinaryUploader @Inject constructor(
                     tempFile.asRequestBody("image/*".toMediaTypeOrNull())
                 )
                 .build()
-
-            val cloudName = BuildConfig.CLOUDINARY_CLOUD_NAME
-            if (cloudName.isBlank() || cloudName == "sckangrp") {
-                 android.util.Log.w("Cloudinary", "Cloudinary cloud name appears to be the default/empty.")
-            }
 
             val request = Request.Builder()
                 .url("https://api.cloudinary.com/v1_1/$cloudName/image/upload")
