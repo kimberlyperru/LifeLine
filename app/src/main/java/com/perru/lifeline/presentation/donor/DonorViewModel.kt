@@ -9,11 +9,13 @@ import com.perru.lifeline.domain.repository.AuthRepository
 import com.perru.lifeline.domain.repository.RequestRepository
 import com.perru.lifeline.util.BloodCompatibility
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,7 +23,8 @@ import javax.inject.Inject
 data class DonorFeedUiState(
     val allRequests: List<BloodRequest> = emptyList(),
     val compatibleOnly: Boolean = true,
-    val currentUser: LifeLineUser? = null
+    val currentUser: LifeLineUser? = null,
+    val isLoading: Boolean = false
 ) {
     val visibleRequests: List<BloodRequest>
         get() {
@@ -43,15 +46,26 @@ class DonorViewModel @Inject constructor(
     private val _compatibleOnly = MutableStateFlow(true)
 
     val uiState: StateFlow<DonorFeedUiState> = combine(
-        requestRepository.activeRequestsFlow(),
+        requestRepository.activeRequestsFlow().onStart { /* Optionally trigger loading if repo is slow */ },
         authRepository.currentUserFlow(),
         _compatibleOnly
     ) { requests, user, compatibleOnly ->
-        DonorFeedUiState(allRequests = requests, compatibleOnly = compatibleOnly, currentUser = user)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), DonorFeedUiState())
+        DonorFeedUiState(
+            allRequests = requests,
+            compatibleOnly = compatibleOnly,
+            currentUser = user,
+            isLoading = false // It's not loading once we have data from flows
+        )
+    }.onStart {
+        emit(DonorFeedUiState(isLoading = true))
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), DonorFeedUiState(isLoading = true))
 
     fun toggleCompatibleOnly() {
         _compatibleOnly.value = !_compatibleOnly.value
+    }
+
+    fun getRequestById(id: String): Flow<BloodRequest?> {
+        return requestRepository.getRequestFlow(id)
     }
 
     /** Resets role to UNSET so the auth-driven nav graph routes back through onboarding,
@@ -79,4 +93,6 @@ class DonorViewModel @Inject constructor(
             onResult(requestRepository.pledgeToRequest(pledge))
         }
     }
+
+    fun signOut() = authRepository.signOut()
 }

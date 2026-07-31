@@ -17,10 +17,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.perru.lifeline.R
 import com.perru.lifeline.domain.model.BloodGroup
 import com.perru.lifeline.domain.model.UserRole
 import com.perru.lifeline.ui.theme.Crimson
@@ -73,18 +75,18 @@ fun RoleSelectionScreen(
             ) { role ->
                 if (role == null) {
                     Column {
-                        Text("How will you use LifeLine?", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.how_use_lifeline), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
                         Spacer(Modifier.height(6.dp))
                         Text(
-                            "You can always reach out to us if this needs to change later.",
+                            stringResource(R.string.role_subtitle),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(Modifier.height(28.dp))
 
                         RoleCard(
-                            title = "I'm a Donor",
-                            subtitle = "Browse nearby requests, track eligibility, and stay donation-ready.",
+                            title = stringResource(R.string.role_donor_title),
+                            subtitle = stringResource(R.string.role_donor_subtitle),
                             icon = Icons.Filled.Favorite,
                             accent = Crimson,
                             accentSoft = CrimsonLight,
@@ -95,8 +97,8 @@ fun RoleSelectionScreen(
                         )
                         Spacer(Modifier.height(16.dp))
                         RoleCard(
-                            title = "I'm a Hospital / Clinic",
-                            subtitle = "Post urgent blood requests and track pledged donors.",
+                            title = stringResource(R.string.role_hospital_title),
+                            subtitle = stringResource(R.string.role_hospital_subtitle),
                             icon = Icons.Filled.LocalHospital,
                             accent = SageGreen,
                             accentSoft = SageGreenLight,
@@ -109,25 +111,25 @@ fun RoleSelectionScreen(
                 } else {
                     Column {
                         Text(
-                            if (role == UserRole.DONOR) "Tell us about you" else "Tell us about your facility",
+                            if (role == UserRole.DONOR) stringResource(R.string.tell_us_about_you) else stringResource(R.string.tell_us_about_facility),
                             style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold
                         )
                         Spacer(Modifier.height(20.dp))
 
                         OutlinedTextField(
                             value = displayName, onValueChange = { displayName = it },
-                            label = { Text(if (role == UserRole.DONOR) "Full name" else "Contact person name") },
+                            label = { Text(if (role == UserRole.DONOR) stringResource(R.string.full_name) else stringResource(R.string.contact_person_name)) },
                             singleLine = true, modifier = Modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium
                         )
                         Spacer(Modifier.height(12.dp))
                         OutlinedTextField(
-                            value = city, onValueChange = { city = it }, label = { Text("City") }, singleLine = true,
+                            value = city, onValueChange = { city = it }, label = { Text(stringResource(R.string.city)) }, singleLine = true,
                             modifier = Modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium
                         )
 
                         if (role == UserRole.DONOR) {
                             Spacer(Modifier.height(16.dp))
-                            Text("Blood group", style = MaterialTheme.typography.labelLarge)
+                            Text(stringResource(R.string.blood_group), style = MaterialTheme.typography.labelLarge)
                             Spacer(Modifier.height(8.dp))
                             LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 items(BloodGroup.entries) { group ->
@@ -144,7 +146,7 @@ fun RoleSelectionScreen(
                         } else {
                             Spacer(Modifier.height(12.dp))
                             OutlinedTextField(
-                                value = hospitalName, onValueChange = { hospitalName = it }, label = { Text("Hospital / clinic name") },
+                                value = hospitalName, onValueChange = { hospitalName = it }, label = { Text(stringResource(R.string.hospital_clinic_name)) },
                                 singleLine = true, modifier = Modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium
                             )
                         }
@@ -178,7 +180,7 @@ fun RoleSelectionScreen(
                             if (onboardingState.isLoading) {
                                 CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp, color = Color.White)
                             } else {
-                                Text("Continue")
+                                Text(stringResource(R.string.continue_btn))
                             }
                         }
 
@@ -186,7 +188,7 @@ fun RoleSelectionScreen(
                         TextButton(onClick = { 
                             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                             selectedRole = null 
-                        }) { Text("Back") }
+                        }) { Text(stringResource(R.string.back_btn)) }
                     }
                 }
             }

@@ -8,14 +8,18 @@
     },
     "requests": {
       ".read": "auth != null",
+      ".indexOn": ["status", "hospitalUid"],
       "$requestId": {
-        ".write": "auth != null && (!data.exists() || data.child('hospitalUid').val() === auth.uid || newData.child('hospitalUid').val() === data.child('hospitalUid').val())"
+        ".write": "auth != null && ((!data.exists() && newData.child('hospitalUid').val() === auth.uid) || (data.exists() && (data.child('hospitalUid').val() === auth.uid || newData.child('unitsPledged').exists())))",
+        "unitsPledged": {
+          ".validate": "newData.isNumber() && (!data.exists() || newData.val() === data.val() + 1)"
+        }
       }
     },
     "pledges": {
       ".read": "auth != null",
       "$pledgeId": {
-        ".write": "auth != null && (!data.exists()) && newData.child('donorUid').val() === auth.uid"
+        ".write": "auth != null && !data.exists() && newData.child('donorUid').val() === auth.uid"
       }
     }
   }

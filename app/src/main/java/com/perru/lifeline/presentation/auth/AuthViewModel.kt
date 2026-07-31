@@ -91,12 +91,6 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun selectRole(uid: String, role: UserRole, onSuccess: () -> Unit) {
-        viewModelScope.launch {
-            authRepository.setUserRole(uid, role).onSuccess { onSuccess() }
-        }
-    }
-
     fun completeOnboarding(
         uid: String,
         email: String,

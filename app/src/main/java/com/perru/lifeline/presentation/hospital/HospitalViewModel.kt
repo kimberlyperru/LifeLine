@@ -7,6 +7,8 @@ import com.perru.lifeline.data.remote.CloudinaryUploader
 import com.perru.lifeline.domain.model.BloodRequest
 import com.perru.lifeline.domain.model.LifeLineUser
 import com.perru.lifeline.domain.model.RequestStatus
+import com.perru.lifeline.domain.model.UrgencyLevel
+import com.perru.lifeline.domain.model.UserRole
 import com.perru.lifeline.domain.repository.AuthRepository
 import com.perru.lifeline.domain.repository.RequestRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -55,6 +57,13 @@ class HospitalViewModel @Inject constructor(
     private val _createState = MutableStateFlow(CreateRequestState())
     val createState: StateFlow<CreateRequestState> = _createState.asStateFlow()
 
+    private val _crisisMode = MutableStateFlow(false)
+    val crisisMode: StateFlow<Boolean> = _crisisMode.asStateFlow()
+
+    fun toggleCrisisMode() {
+        _crisisMode.value = !_crisisMode.value
+    }
+
     fun submitRequest(
         hospital: LifeLineUser,
         request: BloodRequest,
@@ -78,7 +87,8 @@ class HospitalViewModel @Inject constructor(
                 hospitalUid = hospital.uid,
                 hospitalName = hospital.hospitalName.ifBlank { hospital.displayName },
                 hospitalCity = hospital.city,
-                verificationImageUrl = imageUrl
+                verificationImageUrl = imageUrl,
+                urgency = if (_crisisMode.value) UrgencyLevel.CRITICAL else request.urgency
             )
 
             requestRepository.createRequest(finalRequest)
@@ -95,7 +105,9 @@ class HospitalViewModel @Inject constructor(
      *  letting the person pick Donor or Hospital again. */
     fun switchRole(uid: String) {
         viewModelScope.launch {
-            authRepository.setUserRole(uid, com.perru.lifeline.domain.model.UserRole.UNSET)
+            authRepository.setUserRole(uid, UserRole.UNSET)
         }
     }
+
+    fun signOut() = authRepository.signOut()
 }

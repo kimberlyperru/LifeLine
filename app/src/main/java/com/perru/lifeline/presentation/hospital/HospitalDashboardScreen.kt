@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.People
@@ -25,6 +26,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -45,8 +47,8 @@ fun HospitalDashboardScreen(
     val requests by viewModel.myRequests.collectAsState()
     val totalPledges by viewModel.totalPledges.collectAsState()
     val livesSaved by viewModel.livesSaved.collectAsState()
+    val crisisMode by viewModel.crisisMode.collectAsState()
     var showSwitchRoleDialog by remember { mutableStateOf(false) }
-    var crisisMode by remember { mutableStateOf(false) }
     val haptic = LocalHapticFeedback.current
 
     if (showSwitchRoleDialog) {
@@ -72,7 +74,7 @@ fun HospitalDashboardScreen(
                     onCreateRequest()
                 },
                 icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                text = { Text("New request") },
+                text = { Text(stringResource(R.string.new_request_btn)) },
                 containerColor = if (crisisMode) Crimson else MaterialTheme.colorScheme.primaryContainer
             )
         }
@@ -90,7 +92,8 @@ fun HospitalDashboardScreen(
                         onSwitchRoleClick = { 
                             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                             showSwitchRoleDialog = true 
-                        }
+                        },
+                        onSignOutClick = { viewModel.signOut() }
                     )
                 }
 
@@ -122,7 +125,7 @@ fun HospitalDashboardScreen(
                         Card(
                             onClick = { 
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                crisisMode = !crisisMode 
+                                viewModel.toggleCrisisMode()
                             },
                             colors = CardDefaults.cardColors(
                                 containerColor = if (crisisMode) Crimson.copy(alpha = 0.1f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
@@ -136,19 +139,19 @@ fun HospitalDashboardScreen(
                             ) {
                                 Icon(
                                     Icons.Filled.NotificationsActive,
-                                    contentDescription = null,
+                                    contentDescription = stringResource(R.string.cd_crisis_toggle),
                                     tint = if (crisisMode) Crimson else MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                                 Spacer(Modifier.width(16.dp))
                                 Column(modifier = Modifier.weight(1f)) {
-                                    Text("Emergency Mode", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                    Text("Highlight requests to nearby donors as CRITICAL.", style = MaterialTheme.typography.bodySmall)
+                                    Text(stringResource(R.string.emergency_mode), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                                    Text(stringResource(R.string.emergency_mode_subtitle), style = MaterialTheme.typography.bodySmall)
                                 }
                                 Switch(
                                     checked = crisisMode,
                                     onCheckedChange = { 
                                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                        crisisMode = it 
+                                        viewModel.toggleCrisisMode()
                                     },
                                     colors = SwitchDefaults.colors(checkedThumbColor = Crimson)
                                 )
@@ -218,7 +221,7 @@ private fun StatCard(
 }
 
 @Composable
-private fun HospitalHeader(hospitalName: String?, onSwitchRoleClick: () -> Unit) {
+private fun HospitalHeader(hospitalName: String?, onSwitchRoleClick: () -> Unit, onSignOutClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -228,8 +231,13 @@ private fun HospitalHeader(hospitalName: String?, onSwitchRoleClick: () -> Unit)
             )
             .padding(horizontal = 20.dp, vertical = 24.dp)
     ) {
-        IconButton(onClick = onSwitchRoleClick, modifier = Modifier.align(Alignment.TopEnd)) {
-            Icon(Icons.Filled.SwapHoriz, contentDescription = "Switch account type", tint = CreamSurface)
+        Row(modifier = Modifier.align(Alignment.TopEnd)) {
+            IconButton(onClick = onSignOutClick) {
+                Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = stringResource(R.string.cd_logout), tint = CreamSurface)
+            }
+            IconButton(onClick = onSwitchRoleClick) {
+                Icon(Icons.Filled.SwapHoriz, contentDescription = stringResource(R.string.cd_switch_role), tint = CreamSurface)
+            }
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(

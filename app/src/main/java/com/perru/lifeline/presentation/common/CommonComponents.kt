@@ -1,5 +1,6 @@
 package com.perru.lifeline.presentation.common
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -7,6 +8,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -16,6 +21,64 @@ import com.perru.lifeline.ui.theme.UrgencyCritical
 import com.perru.lifeline.ui.theme.UrgencyHigh
 import com.perru.lifeline.ui.theme.UrgencyModerate
 import com.perru.lifeline.util.TimeUtils
+
+fun Modifier.shimmer(): Modifier = composed {
+    val transition = rememberInfiniteTransition(label = "shimmer")
+    val translateAnim = transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1000f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1200, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "shimmerTranslation"
+    )
+
+    val shimmerColors = listOf(
+        Color.LightGray.copy(alpha = 0.6f),
+        Color.LightGray.copy(alpha = 0.2f),
+        Color.LightGray.copy(alpha = 0.6f),
+    )
+
+    val brush = Brush.linearGradient(
+        colors = shimmerColors,
+        start = Offset.Zero,
+        end = Offset(x = translateAnim.value, y = translateAnim.value)
+    )
+
+    background(brush)
+}
+
+@Composable
+fun ShimmerRequestCard(modifier: Modifier = Modifier) {
+    Card(
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(modifier = Modifier.size(48.dp, 28.dp).clip(RoundedCornerShape(12.dp)).shimmer())
+                    Spacer(Modifier.width(8.dp))
+                    Box(modifier = Modifier.size(60.dp, 12.dp).shimmer())
+                }
+                Box(modifier = Modifier.size(70.dp, 24.dp).clip(RoundedCornerShape(50)).shimmer())
+            }
+            Spacer(Modifier.height(12.dp))
+            Box(modifier = Modifier.size(140.dp, 18.dp).shimmer())
+            Spacer(Modifier.height(4.dp))
+            Box(modifier = Modifier.size(100.dp, 14.dp).shimmer())
+            Spacer(Modifier.height(8.dp))
+            Box(modifier = Modifier.size(120.dp, 14.dp).shimmer())
+        }
+    }
+}
 
 fun UrgencyLevel.color(): Color = when (this) {
     UrgencyLevel.CRITICAL -> UrgencyCritical

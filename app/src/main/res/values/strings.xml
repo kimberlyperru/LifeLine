@@ -1,3 +1,85 @@
 <resources>
     <string name="app_name">LifeLine</string>
+
+    <!-- Auth Screens -->
+    <string name="welcome_back">Welcome back</string>
+    <string name="login_subtitle">Someone nearby may need you today.</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="new_to_lifeline">New to LifeLine? </string>
+    <string name="create_account">Create an account</string>
+    <string name="join_lifeline">Join LifeLine</string>
+    <string name="signup_subtitle">Every donor and every hospital starts here.</string>
+    <string name="password_hint">Password (min. 6 characters)</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="already_have_account">Already have an account? </string>
+    <string name="sign_in_link">Sign in</string>
+
+    <!-- Role Selection & Onboarding -->
+    <string name="how_use_lifeline">How will you use LifeLine?</string>
+    <string name="role_subtitle">You can always reach out to us if this needs to change later.</string>
+    <string name="role_donor_title">I\'m a Donor</string>
+    <string name="role_donor_subtitle">Browse nearby requests, track eligibility, and stay donation-ready.</string>
+    <string name="role_hospital_title">I\'m a Hospital / Clinic</string>
+    <string name="role_hospital_subtitle">Post urgent blood requests and track pledged donors.</string>
+    <string name="tell_us_about_you">Tell us about you</string>
+    <string name="tell_us_about_facility">Tell us about your facility</string>
+    <string name="full_name">Full name</string>
+    <string name="contact_person_name">Contact person name</string>
+    <string name="city">City</string>
+    <string name="blood_group">Blood group</string>
+    <string name="hospital_clinic_name">Hospital / clinic name</string>
+    <string name="continue_btn">Continue</string>
+    <string name="back_btn">Back</string>
+
+    <!-- Donor Feed -->
+    <string name="donor_greeting">Hi%1$s 👋</string>
+    <string name="donor_header_subtitle">Thanks for being ready to save a life.</string>
+    <string name="active_requests">Active requests</string>
+    <string name="filter_compatible">Compatible with me</string>
+    <string name="filter_all">Showing all</string>
+    <string name="no_requests">No active requests right now — check back soon.</string>
+    <string name="ready_to_donate">Ready</string>
+    <string name="days_remaining">%1$dd</string>
+    <string name="eligible_title">You\'re eligible to donate!</string>
+    <string name="almost_there_title">Almost there</string>
+    <string name="eligible_subtitle">Your body has fully replenished — ready to save a life?</string>
+    <string name="remaining_subtitle">%1$d of %2$d days left until your next eligible donation.</string>
+    <string name="switch_role_title">Switch to %1$s?</string>
+    <string name="switch_role_message">You\'ll be taken back through a quick setup step to switch your account type. Your existing profile details are kept.</string>
+    <string name="switch_btn">Switch</string>
+    <string name="cancel_btn">Cancel</string>
+
+    <!-- Hospital Dashboard / Create Request -->
+    <string name="new_blood_request">New blood request</string>
+    <string name="blood_group_needed">Blood group needed</string>
+    <string name="component">Component</string>
+    <string name="urgency">Urgency</string>
+    <string name="units_needed">Units needed</string>
+    <string name="contact_phone">Contact phone</string>
+    <string name="notes_optional">Notes (optional)</string>
+    <string name="verification_doc_optional">Verification document (optional)</string>
+    <string name="change_image">Change image</string>
+    <string name="upload_doc_btn">Upload hospital badge or requisition</string>
+    <string name="not_verified_warning">Your account is not verified. You cannot post SOS requests until a LifeLine administrator verifies your hospital.</string>
+    <string name="post_sos_request">Post SOS Request</string>
+    <string name="uploading_image">Uploading image…</string>
+    <string name="posting_request">Posting request…</string>
+    <string name="emergency_mode">Emergency Mode</string>
+    <string name="emergency_mode_subtitle">Highlight requests to nearby donors as CRITICAL.</string>
+    <string name="new_request_btn">New request</string>
+
+    <!-- Accessibility -->
+    <string name="cd_logo">LifeLine logo</string>
+    <string name="cd_google_icon">Google icon</string>
+    <string name="cd_switch_role">Switch account type</string>
+    <string name="cd_back">Back</string>
+    <string name="cd_selected_verification">Selected verification image</string>
+    <string name="cd_upload_icon">Upload icon</string>
+    <string name="cd_profile_pic">Profile picture</string>
+    <string name="cd_logout">Logout</string>
+    <string name="cd_crisis_toggle">Toggle emergency crisis mode</string>
+
 </resources>

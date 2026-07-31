@@ -14,10 +14,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.perru.lifeline.domain.model.UserRole
+import com.perru.lifeline.presentation.auth.AuthScreen
 import com.perru.lifeline.presentation.auth.AuthViewModel
-import com.perru.lifeline.presentation.auth.LoginScreen
 import com.perru.lifeline.presentation.auth.RoleSelectionScreen
-import com.perru.lifeline.presentation.auth.SignUpScreen
 import com.perru.lifeline.presentation.donor.DonorFeedScreen
 import com.perru.lifeline.presentation.donor.RequestDetailScreen
 import com.perru.lifeline.presentation.home.HomeScreen
@@ -51,8 +50,8 @@ fun LifeLineNavHost() {
         if (!splashFinished) return@LaunchedEffect
         val target = when {
             !onboardingSeen -> Screen.Onboarding.route
-            !isSignedIn -> Screen.Home.route
-            currentUser == null -> return@LaunchedEffect // profile still loading — hold current screen
+            !isSignedIn -> Screen.Auth.route
+            currentUser == null -> Screen.RoleSelection.route // Ghost User Fix: navigate instead of hanging
             currentUser?.role == UserRole.DONOR -> Screen.DonorFeed.route
             currentUser?.role == UserRole.HOSPITAL -> Screen.HospitalDashboard.route
             else -> Screen.RoleSelection.route
@@ -76,27 +75,20 @@ fun LifeLineNavHost() {
             HomeScreen(
                 onContinueAsDonor = {
                     pendingRoleIntent = UserRole.DONOR
-                    navController.navigate(Screen.Login.route)
+                    navController.navigate(Screen.Auth.route)
                 },
                 onContinueAsHospital = {
                     pendingRoleIntent = UserRole.HOSPITAL
-                    navController.navigate(Screen.Login.route)
+                    navController.navigate(Screen.Auth.route)
                 },
-                onSignIn = { navController.navigate(Screen.Login.route) },
+                onSignIn = { navController.navigate(Screen.Auth.route) },
                 onGoToDashboard = { /* handled by the redirect effect once signed in with a role */ },
                 onRequestClick = { requestId -> navController.navigate(Screen.RequestDetail.createRoute(requestId)) }
             )
         }
-        composable(Screen.Login.route) {
-            LoginScreen(
-                onLoginSuccess = { /* navigation handled by LaunchedEffect above */ },
-                onNavigateToSignUp = { navController.navigate(Screen.SignUp.route) }
-            )
-        }
-        composable(Screen.SignUp.route) {
-            SignUpScreen(
-                onSignUpSuccess = { /* navigation handled by LaunchedEffect above */ },
-                onNavigateToLogin = { navController.popBackStack() }
+        composable(Screen.Auth.route) {
+            AuthScreen(
+                onAuthSuccess = { /* navigation handled by LaunchedEffect above */ }
             )
         }
         composable(Screen.RoleSelection.route) {
@@ -113,7 +105,7 @@ fun LifeLineNavHost() {
             RequestDetailScreen(
                 requestId = requestId,
                 onBack = { navController.popBackStack() },
-                onRequireSignIn = { navController.navigate(Screen.Login.route) }
+                onRequireSignIn = { navController.navigate(Screen.Auth.route) }
             )
         }
         composable(Screen.HospitalDashboard.route) {

@@ -11,6 +11,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -24,12 +25,14 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.perru.lifeline.R
 import com.perru.lifeline.presentation.common.RequestCard
+import com.perru.lifeline.presentation.common.ShimmerRequestCard
 import com.perru.lifeline.ui.theme.Crimson
 import com.perru.lifeline.ui.theme.CreamSurface
 import com.perru.lifeline.ui.theme.SageGreen
@@ -74,7 +77,8 @@ fun DonorFeedScreen(
                     onSwitchRoleClick = { 
                         haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                         showSwitchRoleDialog = true 
-                    }
+                    },
+                    onSignOutClick = { viewModel.signOut() }
                 )
             }
 
@@ -97,7 +101,7 @@ fun DonorFeedScreen(
                         .padding(top = 20.dp)
                 ) {
                     Text(
-                        "Active requests",
+                        stringResource(R.string.active_requests),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -107,12 +111,18 @@ fun DonorFeedScreen(
                             haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                             viewModel.toggleCompatibleOnly()
                         },
-                        label = { Text(if (state.compatibleOnly) "Compatible with me" else "Showing all") }
+                        label = { Text(if (state.compatibleOnly) stringResource(R.string.filter_compatible) else stringResource(R.string.filter_all)) }
                     )
                 }
             }
 
-            if (state.visibleRequests.isEmpty()) {
+            if (state.isLoading) {
+                items(3) {
+                    Box(modifier = Modifier.padding(horizontal = 20.dp, vertical = 7.dp)) {
+                        ShimmerRequestCard()
+                    }
+                }
+            } else if (state.visibleRequests.isEmpty()) {
                 item {
                     Box(
                         modifier = Modifier
@@ -121,7 +131,7 @@ fun DonorFeedScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            "No active requests right now — check back soon.",
+                            stringResource(R.string.no_requests),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = androidx.compose.ui.text.style.TextAlign.Center
                         )
@@ -276,7 +286,7 @@ private fun NutritionHubCarousel() {
 }
 
 @Composable
-private fun DonorHeader(donorFirstName: String?, onSwitchRoleClick: () -> Unit) {
+private fun DonorHeader(donorFirstName: String?, onSwitchRoleClick: () -> Unit, onSignOutClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -286,8 +296,13 @@ private fun DonorHeader(donorFirstName: String?, onSwitchRoleClick: () -> Unit) 
             )
             .padding(horizontal = 20.dp, vertical = 24.dp)
     ) {
-        IconButton(onClick = onSwitchRoleClick, modifier = Modifier.align(Alignment.TopEnd)) {
-            Icon(Icons.Filled.SwapHoriz, contentDescription = "Switch account type", tint = CreamSurface)
+        Row(modifier = Modifier.align(Alignment.TopEnd)) {
+            IconButton(onClick = onSignOutClick) {
+                Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = stringResource(R.string.cd_logout), tint = CreamSurface)
+            }
+            IconButton(onClick = onSwitchRoleClick) {
+                Icon(Icons.Filled.SwapHoriz, contentDescription = stringResource(R.string.cd_switch_role), tint = CreamSurface)
+            }
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
@@ -299,21 +314,21 @@ private fun DonorHeader(donorFirstName: String?, onSwitchRoleClick: () -> Unit) 
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.logo_lifeline),
-                    contentDescription = null,
+                    contentDescription = stringResource(R.string.cd_logo),
                     modifier = Modifier.size(40.dp)
                 )
             }
             Spacer(Modifier.width(14.dp))
             Column {
                 Text(
-                    "Hi${if (donorFirstName != null) ", $donorFirstName" else ""} 👋",
+                    stringResource(R.string.donor_greeting, donorFirstName ?: ""),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     color = CreamSurface
                 )
                 Spacer(Modifier.height(2.dp))
                 Text(
-                    "Thanks for being ready to save a life.",
+                    stringResource(R.string.donor_header_subtitle),
                     style = MaterialTheme.typography.bodyMedium,
                     color = CreamSurface.copy(alpha = 0.9f)
                 )
@@ -326,10 +341,10 @@ private fun DonorHeader(donorFirstName: String?, onSwitchRoleClick: () -> Unit) 
 fun SwitchRoleDialog(targetRoleLabel: String, onConfirm: () -> Unit, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Switch to $targetRoleLabel?") },
-        text = { Text("You'll be taken back through a quick setup step to switch your account type. Your existing profile details are kept.") },
-        confirmButton = { TextButton(onClick = onConfirm) { Text("Switch") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } }
+        title = { Text(stringResource(R.string.switch_role_title, targetRoleLabel)) },
+        text = { Text(stringResource(R.string.switch_role_message)) },
+        confirmButton = { TextButton(onClick = onConfirm) { Text(stringResource(R.string.switch_btn)) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel_btn)) } }
     )
 }
 
@@ -375,7 +390,7 @@ private fun EligibilityCard(lastDonationMillis: Long?) {
                         modifier = Modifier.fillMaxSize()
                     )
                     Text(
-                        text = if (eligible) "Ready" else "${daysRemaining}d",
+                        text = if (eligible) stringResource(R.string.ready_to_donate) else stringResource(R.string.days_remaining, daysRemaining),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
                         color = if (eligible) Color.White else MaterialTheme.colorScheme.onSecondaryContainer
@@ -384,7 +399,7 @@ private fun EligibilityCard(lastDonationMillis: Long?) {
                 Spacer(Modifier.width(16.dp))
                 Column {
                     Text(
-                        if (eligible) "You're eligible to donate!" else "Almost there",
+                        if (eligible) stringResource(R.string.eligible_title) else stringResource(R.string.almost_there_title),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = if (eligible) Color.White else MaterialTheme.colorScheme.onSecondaryContainer
@@ -392,9 +407,9 @@ private fun EligibilityCard(lastDonationMillis: Long?) {
                     Spacer(Modifier.height(2.dp))
                     Text(
                         if (eligible) {
-                            "Your body has fully replenished — ready to save a life?"
+                            stringResource(R.string.eligible_subtitle)
                         } else {
-                            "$daysRemaining of $windowDays days left until your next eligible donation."
+                            stringResource(R.string.remaining_subtitle, daysRemaining, windowDays)
                         },
                         style = MaterialTheme.typography.bodyMedium,
                         color = (if (eligible) Color.White else MaterialTheme.colorScheme.onSecondaryContainer).copy(alpha = 0.8f)

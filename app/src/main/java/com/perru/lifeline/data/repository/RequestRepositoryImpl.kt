@@ -5,6 +5,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.MutableData
+import com.google.firebase.database.Query
 import com.google.firebase.database.Transaction
 import com.google.firebase.database.ValueEventListener
 import com.perru.lifeline.domain.model.BloodRequest
@@ -36,11 +37,16 @@ class RequestRepositoryImpl @Inject constructor(
     private val pledgesRef get() = database.getReference(PLEDGES_NODE)
 
     override fun activeRequestsFlow(): Flow<List<BloodRequest>> =
-        requestsRef.observeAsList<BloodRequest> { request, id -> request.copy(id = id) }
+        requestsRef.orderByChild("status").equalTo(RequestStatus.ACTIVE.name)
+            .observeAsList<BloodRequest> { request, id -> request.copy(id = id) }
             .map { requests ->
-                requests.filter { it.status == RequestStatus.ACTIVE }
-                    .sortedByDescending { it.createdAtMillis }
+                requests.sortedByDescending { it.createdAtMillis }
             }
+
+    override fun getRequestFlow(requestId: String): Flow<BloodRequest?> =
+        requestsRef.child(requestId).observeSingle<BloodRequest> { request, id ->
+            request.copy(id = id)
+        }
 
     override suspend fun getRequest(requestId: String): Result<BloodRequest?> = try {
         val snapshot = requestsRef.child(requestId).get().await()
@@ -109,12 +115,9 @@ class RequestRepositoryImpl @Inject constructor(
 }
 
 /**
- * Listens to an entire RTDB node and maps every child to [T], using [stampId]
- * to attach each item's Firebase key as its `id` field. Filtering/sorting per
- * query happens client-side afterwards, since RTDB — unlike Firestore — can't
- * combine an equality filter with a different sort field in one query.
+ * Listens to a Realtime Database query and maps every child to [T].
  */
-private inline fun <reified T> DatabaseReference.observeAsList(
+private inline fun <reified T> Query.observeAsList(
     crossinline stampId: (T, String) -> T
 ): Flow<List<T>> = callbackFlow {
     val listener = object : ValueEventListener {
@@ -126,6 +129,26 @@ private inline fun <reified T> DatabaseReference.observeAsList(
         }
         override fun onCancelled(error: DatabaseError) {
             trySend(emptyList())
+        }
+    }
+    addValueEventListener(listener)
+    awaitClose { removeEventListener(listener) }
+}
+
+/**
+ * Listens to a single document and maps it to [T].
+ */
+private inline fun <reified T> DatabaseReference.observeSingle(
+    crossinline stampId: (T, String) -> T
+): Flow<T?> = callbackFlow {
+    val listener = object : ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+            val value = snapshot.getValue(T::class.java)?.let { stampId(it, snapshot.key.orEmpty()) }
+            trySend(value)
+        }
+        override fun onCancelled(error: DatabaseError) {
+            // We can emit null or close with error. null is safer for Flow<T?>
+            trySend(null)
         }
     }
     addValueEventListener(listener)

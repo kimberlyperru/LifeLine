@@ -37,7 +37,8 @@ fun RequestDetailScreen(
     onRequireSignIn: () -> Unit = {}
 ) {
     val feedState by viewModel.uiState.collectAsState()
-    val request = feedState.allRequests.find { it.id == requestId }
+    val requestSnapshot by viewModel.getRequestById(requestId).collectAsState(initial = null)
+    val request = requestSnapshot
     val context = LocalContext.current
     var pledgeInFlight by remember { mutableStateOf(false) }
     var pledgeConfirmed by remember { mutableStateOf(false) }

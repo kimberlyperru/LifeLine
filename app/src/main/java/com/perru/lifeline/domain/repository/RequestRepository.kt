@@ -9,6 +9,9 @@ interface RequestRepository {
     /** Real-time stream of active requests, newest first. */
     fun activeRequestsFlow(): Flow<List<BloodRequest>>
 
+    /** Real-time stream of a specific request, regardless of status. */
+    fun getRequestFlow(requestId: String): Flow<BloodRequest?>
+
     suspend fun getRequest(requestId: String): Result<BloodRequest?>
 
     suspend fun createRequest(request: BloodRequest): Result<String>
