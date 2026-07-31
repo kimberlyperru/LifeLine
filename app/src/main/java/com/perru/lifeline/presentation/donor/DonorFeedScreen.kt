@@ -28,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.perru.lifeline.R
@@ -36,6 +37,7 @@ import com.perru.lifeline.presentation.common.ShimmerRequestCard
 import com.perru.lifeline.ui.theme.Crimson
 import com.perru.lifeline.ui.theme.CreamSurface
 import com.perru.lifeline.ui.theme.SageGreen
+import com.perru.lifeline.ui.theme.SageGreenDark
 import com.perru.lifeline.ui.theme.SageGreenLight
 import com.perru.lifeline.ui.theme.Terracotta
 import com.perru.lifeline.util.BloodCompatibility
@@ -287,50 +289,89 @@ private fun NutritionHubCarousel() {
 
 @Composable
 private fun DonorHeader(donorFirstName: String?, onSwitchRoleClick: () -> Unit, onSignOutClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                Brush.verticalGradient(listOf(Terracotta, Crimson)),
-                shape = RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp)
-            )
-            .padding(horizontal = 20.dp, vertical = 24.dp)
+    Surface(
+        color = Color.Transparent,
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Row(modifier = Modifier.align(Alignment.TopEnd)) {
-            IconButton(onClick = onSignOutClick) {
-                Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = stringResource(R.string.cd_logout), tint = CreamSurface)
-            }
-            IconButton(onClick = onSwitchRoleClick) {
-                Icon(Icons.Filled.SwapHoriz, contentDescription = stringResource(R.string.cd_switch_role), tint = CreamSurface)
-            }
-        }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                modifier = Modifier
-                    .size(52.dp)
-                    .clip(CircleShape)
-                    .background(CreamSurface),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.logo_lifeline),
-                    contentDescription = stringResource(R.string.cd_logo),
-                    modifier = Modifier.size(40.dp)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Brush.verticalGradient(listOf(Terracotta, Crimson)),
+                    shape = RoundedCornerShape(bottomStart = 40.dp, bottomEnd = 40.dp)
                 )
-            }
-            Spacer(Modifier.width(14.dp))
+                .padding(horizontal = 24.dp, vertical = 32.dp)
+        ) {
             Column {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Top
+                ) {
+                    // Profile/Logo Badge
+                    Box(
+                        modifier = Modifier
+                            .size(64.dp)
+                            .background(CreamSurface.copy(alpha = 0.2f), CircleShape)
+                            .padding(4.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(CircleShape)
+                                .background(CreamSurface),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.logo_lifeline),
+                                contentDescription = stringResource(R.string.cd_logo),
+                                modifier = Modifier.size(48.dp)
+                            )
+                        }
+                    }
+
+                    // Action Icons in a glass-morphic row
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(Color.Black.copy(alpha = 0.1f))
+                            .padding(horizontal = 4.dp)
+                    ) {
+                        IconButton(onClick = onSignOutClick) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.Logout,
+                                contentDescription = stringResource(R.string.cd_logout),
+                                tint = CreamSurface,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
+                        IconButton(onClick = onSwitchRoleClick) {
+                            Icon(
+                                Icons.Filled.SwapHoriz,
+                                contentDescription = stringResource(R.string.cd_switch_role),
+                                tint = CreamSurface,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
+                }
+
+                Spacer(Modifier.height(20.dp))
+
+                // The Greeting
                 Text(
-                    stringResource(R.string.donor_greeting, donorFirstName ?: ""),
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = CreamSurface
+                    text = stringResource(R.string.donor_greeting, donorFirstName ?: ""),
+                    style = MaterialTheme.typography.headlineLarge,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = CreamSurface,
+                    letterSpacing = (-0.5).sp
                 )
-                Spacer(Modifier.height(2.dp))
+                Spacer(Modifier.height(4.dp))
                 Text(
-                    stringResource(R.string.donor_header_subtitle),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = CreamSurface.copy(alpha = 0.9f)
+                    text = stringResource(R.string.donor_header_subtitle),
+                    style = MaterialTheme.typography.titleMedium,
+                    color = CreamSurface.copy(alpha = 0.85f),
+                    lineHeight = 22.sp
                 )
             }
         }
@@ -359,60 +400,92 @@ private fun EligibilityCard(lastDonationMillis: Long?) {
     val eligible = lastDonationMillis == null || daysRemaining <= 0
 
     val backgroundBrush = if (eligible) {
-        Brush.horizontalGradient(listOf(SageGreen, SageGreenLight))
+        Brush.linearGradient(
+            colors = listOf(SageGreen, SageGreenDark),
+            start = androidx.compose.ui.geometry.Offset(0f, 0f),
+            end = androidx.compose.ui.geometry.Offset(1000f, 1000f)
+        )
     } else {
-        Brush.linearGradient(listOf(MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.colorScheme.secondaryContainer))
+        Brush.linearGradient(
+            colors = listOf(MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.8f))
+        )
     }
 
     Card(
-        shape = MaterialTheme.shapes.large,
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        modifier = Modifier.fillMaxWidth().height(110.dp)
+        shape = RoundedCornerShape(24.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 128.dp) // Removed fixed height to prevent text clipping
     ) {
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .background(backgroundBrush)
         ) {
             Row(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(20.dp),
+                    .fillMaxWidth()
+                    .padding(24.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.size(72.dp)) {
+                Box(
+                    contentAlignment = Alignment.Center, 
+                    modifier = Modifier
+                        .size(84.dp) // Slightly larger circle box
+                        .background(Color.Black.copy(alpha = 0.05f), CircleShape)
+                        .padding(4.dp)
+                ) {
                     CircularProgressIndicator(
                         progress = { progress },
-                        strokeWidth = 6.dp,
+                        strokeWidth = 6.dp, // Slightly thinner stroke for more internal space
                         strokeCap = StrokeCap.Round,
-                        color = if (eligible) Color.White else MaterialTheme.colorScheme.secondary,
-                        trackColor = (if (eligible) Color.White else MaterialTheme.colorScheme.secondary).copy(alpha = 0.2f),
+                        color = if (eligible) Color.White else MaterialTheme.colorScheme.primary,
+                        trackColor = (if (eligible) Color.White else MaterialTheme.colorScheme.primary).copy(alpha = 0.2f),
                         modifier = Modifier.fillMaxSize()
                     )
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(8.dp)
+                    ) {
+                        Text(
+                            text = if (eligible) stringResource(R.string.ready_to_donate) else "${daysRemaining}d",
+                            style = MaterialTheme.typography.labelSmall.copy(fontSize = if (eligible) 10.sp else 14.sp),
+                            fontWeight = FontWeight.ExtraBold,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            color = if (eligible) Color.White else MaterialTheme.colorScheme.onSecondaryContainer,
+                            lineHeight = 12.sp
+                        )
+                        if (!eligible) {
+                            Text(
+                                "left",
+                                style = MaterialTheme.typography.labelSmall.copy(fontSize = 8.sp),
+                                color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f)
+                            )
+                        }
+                    }
+                }
+                Spacer(Modifier.width(20.dp))
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.Center
+                ) {
                     Text(
-                        text = if (eligible) stringResource(R.string.ready_to_donate) else stringResource(R.string.days_remaining, daysRemaining),
-                        style = MaterialTheme.typography.labelLarge,
+                        if (eligible) stringResource(R.string.eligible_title) else stringResource(R.string.almost_there_title),
+                        style = MaterialTheme.typography.titleMedium, // Scaled down from titleLarge to fit better
                         fontWeight = FontWeight.Bold,
                         color = if (eligible) Color.White else MaterialTheme.colorScheme.onSecondaryContainer
                     )
-                }
-                Spacer(Modifier.width(16.dp))
-                Column {
-                    Text(
-                        if (eligible) stringResource(R.string.eligible_title) else stringResource(R.string.almost_there_title),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        color = if (eligible) Color.White else MaterialTheme.colorScheme.onSecondaryContainer
-                    )
-                    Spacer(Modifier.height(2.dp))
+                    Spacer(Modifier.height(4.dp))
                     Text(
                         if (eligible) {
                             stringResource(R.string.eligible_subtitle)
                         } else {
                             stringResource(R.string.remaining_subtitle, daysRemaining, windowDays)
                         },
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = (if (eligible) Color.White else MaterialTheme.colorScheme.onSecondaryContainer).copy(alpha = 0.8f)
+                        style = MaterialTheme.typography.bodySmall,
+                        color = (if (eligible) Color.White else MaterialTheme.colorScheme.onSecondaryContainer).copy(alpha = 0.8f),
+                        lineHeight = 16.sp
                     )
                 }
             }

@@ -1,8 +1,11 @@
 package com.perru.lifeline.presentation.auth
 
 import androidx.compose.animation.*
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -28,16 +31,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.perru.lifeline.R
 import com.perru.lifeline.domain.model.BloodGroup
 import com.perru.lifeline.domain.model.UserRole
 import com.perru.lifeline.ui.theme.Crimson
-import com.perru.lifeline.ui.theme.CrimsonLight
 import com.perru.lifeline.ui.theme.SageGreen
 import com.perru.lifeline.ui.theme.SageGreenDark
-import com.perru.lifeline.ui.theme.SageGreenLight
+import com.perru.lifeline.ui.theme.Terracotta
+import com.perru.lifeline.ui.theme.TerracottaDark
 
 @Composable
 fun RoleSelectionScreen(
@@ -120,8 +124,8 @@ fun RoleSelectionScreen(
                             title = "I want to save lives",
                             subtitle = stringResource(R.string.role_donor_subtitle),
                             icon = Icons.Filled.Favorite,
-                            accent = Crimson,
-                            accentSoft = CrimsonLight,
+                            baseColor = Terracotta,
+                            hoverColor = TerracottaDark,
                             onClick = { 
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 selectedRole = UserRole.DONOR 
@@ -132,8 +136,8 @@ fun RoleSelectionScreen(
                             title = "I need blood for patients",
                             subtitle = stringResource(R.string.role_hospital_subtitle),
                             icon = Icons.Filled.LocalHospital,
-                            accent = SageGreen,
-                            accentSoft = SageGreenLight,
+                            baseColor = SageGreen,
+                            hoverColor = SageGreenDark,
                             onClick = { 
                                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 selectedRole = UserRole.HOSPITAL 
@@ -230,27 +234,41 @@ fun RoleSelectionScreen(
 
 @Composable
 private fun RoleCard(
-    title: String, subtitle: String, icon: ImageVector, accent: Color, accentSoft: Color, onClick: () -> Unit
+    title: String, 
+    subtitle: String, 
+    icon: ImageVector, 
+    baseColor: Color, 
+    hoverColor: Color, 
+    onClick: () -> Unit
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    
+    val backgroundColor by animateColorAsState(
+        targetValue = if (isPressed) hoverColor else baseColor,
+        label = "cardColor"
+    )
+
     Card(
         onClick = onClick,
+        interactionSource = interactionSource,
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        colors = CardDefaults.cardColors(containerColor = backgroundColor),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(modifier = Modifier.padding(24.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(
-                modifier = Modifier.size(64.dp).background(accentSoft, CircleShape),
+                modifier = Modifier.size(64.dp).background(Color.White.copy(alpha = 0.2f), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(icon, contentDescription = null, tint = accent, modifier = Modifier.size(32.dp))
+                Icon(icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(32.dp))
             }
             Spacer(Modifier.width(20.dp))
             Column {
-                Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = Color.White)
                 Spacer(Modifier.height(4.dp))
-                Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = Color.White.copy(alpha = 0.85f))
             }
         }
     }
